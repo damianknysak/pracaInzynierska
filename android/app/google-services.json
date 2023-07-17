@@ -1,0 +1,92 @@
+{
+  "project_info": {
+    "project_number": "861452381265",
+    "project_id": "damianinzynierka",
+    "storage_bucket": "damianinzynierka.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861452381265:android:5dadf354fbc183085cdc70",
+        "android_client_info": {
+          "package_name": "com.damian.knysak1.pracaInzynierskaDamianKnysak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861452381265-mb91dibqsiv74fsnoqv60usj482pvs5k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.damian.knysak1.pracaInzynierskaDamianKnysak",
+            "certificate_hash": "4022ab1efc4571624f017e8fa0cc068e91d556ba"
+          }
+        },
+        {
+          "client_id": "861452381265-nv4tjrno57v0ph1c79h40qf09a6aevi6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.damian.knysak1.pracaInzynierskaDamianKnysak",
+            "certificate_hash": "852e4a17ad515c85a5d9b9d4331dfe7f230770ef"
+          }
+        },
+        {
+          "client_id": "861452381265-58e2nia5a23q2e8fgr1phh3qbshc14qh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc0BJcL5c91F1NiHg5kl_w4j413-qN4PA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861452381265-58e2nia5a23q2e8fgr1phh3qbshc14qh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861452381265:android:a5eea489353700ad5cdc70",
+        "android_client_info": {
+          "package_name": "com.damianinzynierka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861452381265-haqm3i2jd3r5r4g5pb2dip1lh85674sn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.damianinzynierka",
+            "certificate_hash": "c108611532e9486e63f7cd8db85801d2628ddc19"
+          }
+        },
+        {
+          "client_id": "861452381265-58e2nia5a23q2e8fgr1phh3qbshc14qh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc0BJcL5c91F1NiHg5kl_w4j413-qN4PA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861452381265-58e2nia5a23q2e8fgr1phh3qbshc14qh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,14 @@
   "expo": {
     "name": "pracaInzynierskaDamianKnysak",
     "slug": "pracaInzynierskaDamianKnysak",
+    "plugins": ["@react-native-google-signin/google-signin",
+    ["expo-media-library",
+    {
+      "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+      "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+      "isAccessMediaLocationEnabled": true
+    }]
+  ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,13 +26,25 @@
       "supportsTablet": true
     },
     "android": {
+        "config": {
+          "googleMaps": {
+              "apiKey": "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY"
+          }
+      },
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.damian.knysak1.pracaInzynierskaDamianKnysak"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cd8c3052-28be-41df-b892-5a5fd3772c06"
+      }
     }
   }
 }
