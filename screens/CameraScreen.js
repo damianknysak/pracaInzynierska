@@ -32,41 +32,40 @@ const CameraScreen = () => {
 
   const cameraRef = useRef(null);
   async function firstConfiguration() {
-    MediaLibrary.requestPermissionsAsync();
-    const cameraStatus = await Camera.requestCameraPermissionsAsync();
-    setHasCameraPermission(cameraStatus.status === "granted");
-    const ratios = await cameraRef.current.getSupportedRatiosAsync();
-
-    if (ratios.indexOf("20:9") < 0) {
-      setRatio("16:9");
-    }
-    console.log(cameraStatus);
-  }
-  useEffect(() => {
-    firstConfiguration();
-  }, []);
-
-  useEffect(() => {
     try {
+      MediaLibrary.requestPermissionsAsync();
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(cameraStatus.status === "granted");
+      const ratios = await cameraRef.current.getSupportedRatiosAsync();
+
+      if (ratios.indexOf("20:9") < 0) {
+        setRatio("16:9");
+      }
+
       Geolocation.getCurrentPosition((pos) => {
         const crd = pos.coords;
         setPositionGeocode({
           latitude: crd.latitude,
           longitude: crd.longitude,
         });
+        console.log(`curr: lat ${crd.latitude} lon ${crd.longitude}`);
       });
-    } catch (err) {
-      console.log(err);
+    } catch (e) {
+      console.log(`First configuration fail: ${e}`);
     }
+  }
+  useEffect(() => {
+    firstConfiguration();
   }, []);
 
   const getAddress = async () => {
     try {
-      const address = await getAddressFromCoordinates({
+      const findAddress = await getAddressFromCoordinates({
         latitude: positionGeocode.latitude,
         longitude: positionGeocode.longitude,
       });
-      setAddress(address.display_name);
+
+      setAddress(findAddress?.display_name);
     } catch (error) {
       console.error(error);
     }
@@ -74,11 +73,10 @@ const CameraScreen = () => {
 
   useEffect(() => {
     if (positionGeocode && !address) {
-      console.log(positionGeocode);
       getAddress();
-      console.log(address);
     }
   }, [positionGeocode]);
+
   const addImgToUser = async () => {
     try {
       const currentUserUid = auth().currentUser.uid;
@@ -96,6 +94,7 @@ const CameraScreen = () => {
           latitude: latitude,
           longitude: longitude,
           address: curAddress,
+          date: firestore.FieldValue.serverTimestamp(),
         });
     } catch (error) {
       console.log(error);

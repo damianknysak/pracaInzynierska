@@ -9,8 +9,10 @@ import MainMenu from "../components/Home/MainMenu";
 import Header from "../components/Home/Header";
 import PopularPlaces from "../components/Home/PopularPlaces";
 import { useNavigation } from "@react-navigation/native";
+import UserActivityView from "../components/Home/UserActivityView";
 
 const HomeScreen = () => {
+  const [headerMenu, setHeaderMenu] = useState("friends");
   const { signOut, user, getCurrentUserInfoDB } = useAuth();
   const [currentUser, setCurrentUser] = useState();
   const navigation = useNavigation();
@@ -40,13 +42,28 @@ const HomeScreen = () => {
         colors={["#374151", "#111827"]}
       >
         <SafeAreaView className="h-screen">
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Header navigation={navigation} userName={currentUser?.firstName} />
-            <MainMenu />
-            <PopularPlaces />
-            <TouchableOpacity onPress={signOut}>
-              <Text className="text-yellow-400">Sign out</Text>
-            </TouchableOpacity>
+          <ScrollView
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            <Header
+              headerMenu={headerMenu}
+              setHeaderMenu={setHeaderMenu}
+              navigation={navigation}
+              userName={currentUser?.firstName}
+            />
+            {headerMenu == "friends" && (
+              <>
+                <MainMenu />
+                <PopularPlaces />
+                <TouchableOpacity onPress={signOut}>
+                  <Text className="text-yellow-400">Sign out</Text>
+                </TouchableOpacity>
+              </>
+            )}
+            {headerMenu == "me" && <UserActivityView />}
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>

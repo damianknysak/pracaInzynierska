@@ -14,7 +14,9 @@ const BottomInfo = ({ address, locationStatus, isPublic }) => {
       {locationStatus && (
         <View className="flex-row space-x-1 bg-black/25 rounded-full h-10 px-5 items-center justify-center">
           <MapPinIcon color="white" size={20} />
-          <Text className="text-white text-xs text-center">{address}</Text>
+          <Text className="text-white text-xs text-center">
+            {address ? address : "OpenStreetMaps niedostępne"}
+          </Text>
         </View>
       )}
     </View>

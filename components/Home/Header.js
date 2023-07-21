@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { BellIcon, CameraIcon, LinkIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
 
-const Header = ({ userName, navigation }) => {
-  const [headerMenu, setHeaderMenu] = useState("friends");
+const Header = ({ headerMenu, setHeaderMenu, userName, navigation }) => {
   return (
     <View>
       <View className="flex-row justify-between mx-3 items-center">
