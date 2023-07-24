@@ -11,7 +11,7 @@ import { addUserToFriends } from "../../utils/firebaseUtils";
 
 const FriendRequest = ({ userEmail }) => {
   return (
-    <View className="bg-black/75 rounded-3xl mx-2 my-1 px-2 py-1">
+    <View className="bg-black/50 rounded-3xl mx-2 my-1 px-2 py-1">
       <View className="flex-row  space-x-2 items-center">
         <UserPlusIcon size={25} color="white" />
         <Text className="text-white mr-3">

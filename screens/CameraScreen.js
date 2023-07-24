@@ -16,6 +16,7 @@ import PropertySwitches from "../components/Camera/PropertySwitches";
 import Geolocation from "@react-native-community/geolocation";
 import { getAddressFromCoordinates } from "../utils/mapsUtils";
 import BottomInfo from "../components/Camera/BottomInfo";
+import { notifyFriends } from "../utils/notifyUtils";
 
 const CameraScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -80,21 +81,25 @@ const CameraScreen = () => {
     try {
       const currentUserUid = auth().currentUser.uid;
       const filename = image.substring(image.lastIndexOf("/") + 1);
-      const latitude = locationStatus ? positionGeocode.latitude : null;
-      const longitude = locationStatus ? positionGeocode.longitude : null;
-      const curAddress = locationStatus ? address : null;
-      await firestore()
+      const latitude = locationStatus ? positionGeocode.latitude || null : null;
+      const longitude = locationStatus
+        ? positionGeocode.longitude || null
+        : null;
+      const curAddress = locationStatus ? address || null : null;
+      const docRef = await firestore()
         .collection("Users")
         .doc(currentUserUid)
         .collection("Images")
         .add({
           isPublic: isPublic,
           imgUrl: filename,
-          latitude: latitude,
-          longitude: longitude,
-          address: curAddress,
+          latitude: latitude || null,
+          longitude: longitude || null,
+          address: curAddress || null,
           date: firestore.FieldValue.serverTimestamp(),
         });
+      //adding notifications
+      isPublic && notifyFriends("imageAdd", docRef.id);
     } catch (error) {
       console.log(error);
     }
