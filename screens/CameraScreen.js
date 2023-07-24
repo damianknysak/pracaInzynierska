@@ -48,7 +48,6 @@ const CameraScreen = () => {
           latitude: crd.latitude,
           longitude: crd.longitude,
         });
-        console.log(`curr: lat ${crd.latitude} lon ${crd.longitude}`);
       });
     } catch (e) {
       console.log(`First configuration fail: ${e}`);

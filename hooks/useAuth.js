@@ -152,26 +152,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  async function getFriendRequests() {
-    try {
-      const querySnapshot = await firestore()
-        .collection("Users")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("friendRequests")
-        .get();
-
-      const friendRequests = [];
-      querySnapshot.forEach((doc) => {
-        friendRequests.push(doc.data());
-      });
-
-      return friendRequests;
-    } catch (error) {
-      console.log(`Nie można pobrać kolekcji "friendRequests": ${error}`);
-      throw error;
-    }
-  }
-
   if (initializing) return null;
 
   return (

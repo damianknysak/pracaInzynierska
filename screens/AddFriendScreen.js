@@ -10,7 +10,7 @@ const AddFriendScreen = () => {
   const [email, setEmail] = useState("");
   return (
     <View className="h-full w-screen items-center justify-center">
-      <View className="relative w-5/6 mt-10 rounded-3xl h-1/3">
+      <View className="relative w-5/6 mt-10 rounded-3xl h-52">
         <LinearGradient
           className="flex-1 rounded-3xl"
           start={{ x: 0, y: 0 }}

@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { BellIcon, CameraIcon, LinkIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
+import { notifyFriends } from "../../utils/notifyUtils";
 
 const Header = ({ headerMenu, setHeaderMenu, userName, navigation }) => {
   return (

@@ -1,6 +1,7 @@
 import auth from "@react-native-firebase/auth";
 import { firebase } from "@react-native-firebase/app";
 import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
 
 export function subscribeToFriendRequests(callback) {
   const unsubscribe = firestore()
@@ -196,4 +197,29 @@ export async function sendFriendRequest(email) {
   } catch (error) {
     console.log(error);
   }
+}
+
+const getProfilePicture = async (userId) => {
+  try {
+    const profilePictureRef = storage().ref(
+      `UsersStorage/${userId}/profilePicture`
+    );
+    const { items } = await profilePictureRef.list({ maxResults: 1 });
+    if (items.length > 0) {
+      const profileImageRef = items[0];
+      return await profileImageRef.getDownloadURL();
+    } else {
+      const defaultImageRef = storage().ref(`DefaultMedia/default_user.png`);
+      return await defaultImageRef.getDownloadURL();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export async function getInfoAboutUser(userId) {
+  const userRef = await firestore().collection("Users").doc(userId).get();
+  const userData = userRef.data();
+  userData.profileImgUrl = await getProfilePicture(userId);
+  return userData;
 }

@@ -58,7 +58,8 @@ const GalleryScreen = () => {
         const userDocument = firestore()
           .collection("Users")
           .doc(user.uid)
-          .collection("Images");
+          .collection("Images")
+          .orderBy("date", "desc");
 
         const querySnapshot = await userDocument.get();
         const imagesList = querySnapshot.docs.map((doc) => doc.data());

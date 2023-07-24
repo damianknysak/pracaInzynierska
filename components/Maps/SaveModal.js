@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { BookmarkIcon } from "react-native-heroicons/outline";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { notifyFriends } from "../../utils/notifyUtils";
 
 const SaveModal = ({ challenge, onCancelPress }) => {
   function distance(coords1, coords2) {
@@ -33,7 +34,7 @@ const SaveModal = ({ challenge, onCancelPress }) => {
       } else {
         dist = challenge.distance;
       }
-      await firestore().collection("Challenges").add({
+      const docRef = await firestore().collection("Challenges").add({
         creatorId: currentUserUid,
         startLongitude: challenge.startLongitude,
         startLatitude: challenge.startLatitude,
@@ -43,6 +44,7 @@ const SaveModal = ({ challenge, onCancelPress }) => {
         date: firestore.FieldValue.serverTimestamp(),
         distance: dist,
       });
+      notifyFriends("challengeAdd", docRef.id);
     } catch (e) {
       console.log(e);
     }

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import useAuth from "../hooks/useAuth";
@@ -10,6 +10,7 @@ import Header from "../components/Home/Header";
 import PopularPlaces from "../components/Home/PopularPlaces";
 import { useNavigation } from "@react-navigation/native";
 import UserActivityView from "../components/Home/UserActivityView";
+import { useEffect } from "react";
 
 const HomeScreen = () => {
   const [headerMenu, setHeaderMenu] = useState("friends");
@@ -17,7 +18,6 @@ const HomeScreen = () => {
   const [currentUser, setCurrentUser] = useState();
   const navigation = useNavigation();
   if (!currentUser) {
-    console.log("Zaczynam");
     getCurrentUserInfoDB()
       .then((tego) => {
         setCurrentUser(tego);
@@ -42,29 +42,31 @@ const HomeScreen = () => {
         colors={["#374151", "#111827"]}
       >
         <SafeAreaView className="h-screen">
-          <ScrollView
-            contentContainerStyle={{
-              paddingBottom: 30,
-            }}
-            showsVerticalScrollIndicator={false}
-          >
-            <Header
-              headerMenu={headerMenu}
-              setHeaderMenu={setHeaderMenu}
-              navigation={navigation}
-              userName={currentUser?.firstName}
-            />
-            {headerMenu == "friends" && (
-              <>
-                <MainMenu />
-                <PopularPlaces />
-                <TouchableOpacity onPress={signOut}>
-                  <Text className="text-yellow-400">Sign out</Text>
-                </TouchableOpacity>
-              </>
-            )}
+          <View>
+            <ScrollView
+              contentContainerStyle={{
+                paddingBottom: 60,
+              }}
+              showsVerticalScrollIndicator={false}
+            >
+              <Header
+                headerMenu={headerMenu}
+                setHeaderMenu={setHeaderMenu}
+                navigation={navigation}
+                userName={currentUser?.firstName}
+              />
+              {headerMenu == "friends" && (
+                <>
+                  <MainMenu />
+                  <PopularPlaces />
+                  <TouchableOpacity onPress={signOut}>
+                    <Text className="text-yellow-400">Sign out</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </ScrollView>
             {headerMenu == "me" && <UserActivityView />}
-          </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>

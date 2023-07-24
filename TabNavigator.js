@@ -18,6 +18,7 @@ const TabNavigator = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: "black",
         },

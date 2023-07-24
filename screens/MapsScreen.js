@@ -70,10 +70,6 @@ const MapsScreen = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(challenge.startLatitude);
-  }, [challenge]);
-
   const onChallengePress = () => {
     if (!challenge.active) {
       setChallenge((prevState) => ({
