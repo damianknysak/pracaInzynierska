@@ -13,7 +13,11 @@ import {
   UserPlusIcon,
   XMarkIcon,
 } from "react-native-heroicons/outline";
-import { getInfoAboutUser } from "../../utils/firebaseUtils";
+import {
+  addUserToFriends,
+  declineInvitation,
+  getInfoAboutUser,
+} from "../../utils/firebaseUtils";
 
 const NotificationElement = ({ item }) => {
   const [senderInfo, setSenderInfo] = useState();
@@ -33,7 +37,7 @@ const NotificationElement = ({ item }) => {
               className="w-14 h-14 rounded-full mr-2"
               source={{ uri: senderInfo.profileImgUrl }}
             />
-            <View style={{ maxWidth: "60%" }}>
+            <View style={{ maxWidth: "70%" }}>
               <Text className="text-white break-words">
                 <Text style={{ color: "tomato" }} className="font-bold">
                   {senderInfo.firstName + " " + senderInfo.lastName}
@@ -41,6 +45,8 @@ const NotificationElement = ({ item }) => {
                 {item.notificationType == "challengeAdd" &&
                   "dodał/a nowe wyzwanie"}
                 {item.notificationType == "imageAdd" && "dodał/a nowe zdjęcie"}
+                {item.notificationType == "friendRequest" &&
+                  "wysłał/a zaproszenie do grona znajomych"}
               </Text>
             </View>
 
@@ -50,7 +56,32 @@ const NotificationElement = ({ item }) => {
             {item.notificationType == "imageAdd" && (
               <PhotoIcon size={25} color="lightgreen" />
             )}
+            {item.notificationType == "friendRequest" && (
+              <UserPlusIcon size={25} color="lightgreen" />
+            )}
           </View>
+          {item.notificationType == "friendRequest" && (
+            <View className="flex-row py-2 justify-center space-x-8">
+              <TouchableOpacity
+                onPress={() => {
+                  addUserToFriends(item.creatorId);
+                }}
+                className="flex-row rounded items-center space-x-1 border px-1 py-2 bg-black/50"
+              >
+                <Text className="text-white">Akceptuj</Text>
+                <CheckBadgeIcon size={25} color="green" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  declineInvitation(item.creatorId);
+                }}
+                className="flex-row rounded items-center space-x-1 border px-1 py-2 bg-black/50"
+              >
+                <Text className="text-white">Odrzuć</Text>
+                <XMarkIcon size={25} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       ) : (
         <ActivityIndicator size={25} color="white" />

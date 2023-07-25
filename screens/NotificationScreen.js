@@ -1,26 +1,19 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
-import { subscribeToFriendRequests } from "../utils/firebaseUtils";
-import FriendRequest from "../components/Notification/FriendRequest";
 import { LinearGradient } from "expo-linear-gradient";
 import { XMarkIcon } from "react-native-heroicons/outline";
 import { subscribeToNotifications } from "../utils/notifyUtils";
 import NotificationElement from "../components/Notification/NotificationElement";
 const NotificationScreen = ({ navigation }) => {
-  const [friendRequests, setFriendRequests] = useState([]);
   const [notificationsList, setNotificationsList] = useState([]);
 
   useEffect(() => {
-    const unsubscribeFriendRequests = subscribeToFriendRequests((requests) => {
-      setFriendRequests(requests);
-    });
     const unsubscribeNotifications = subscribeToNotifications((requests) => {
       setNotificationsList(requests);
     });
 
     // Zwracamy funkcję do odsubskrybowania w celu czyszczenia subskrypcji przy wycofywaniu komponentu
     return () => {
-      unsubscribeFriendRequests();
       unsubscribeNotifications();
     };
   }, []);
@@ -48,18 +41,10 @@ const NotificationScreen = ({ navigation }) => {
             contentContainerStyle={{ paddingBottom: 20 }}
             className="mt-2 flex-1"
           >
-            {friendRequests.map((friendRequest) => {
-              return (
-                <FriendRequest
-                  key={friendRequest.user_requested_email}
-                  userEmail={friendRequest.user_requested_email}
-                />
-              );
-            })}
             {notificationsList.map((notification) => {
               return (
                 <NotificationElement
-                  key={notification.actionId}
+                  key={notification.actionId || notification.creatorId}
                   item={notification}
                 />
               );

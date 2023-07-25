@@ -1,54 +1,37 @@
 import auth from "@react-native-firebase/auth";
-import { firebase } from "@react-native-firebase/app";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 
-export function subscribeToFriendRequests(callback) {
-  const unsubscribe = firestore()
-    .collection("Users")
-    .doc(auth().currentUser.uid)
-    .collection("friendRequests")
-    .onSnapshot((querySnapshot) => {
-      const friendRequests = [];
-      querySnapshot.forEach((doc) => {
-        friendRequests.push(doc.data());
-      });
-      callback(friendRequests);
-    });
-
-  // Return the unsubscribe function for cleaning up the subscription
-  return () => unsubscribe();
-}
-
 const checkIfFriendIsAlreadyInFriendsList = async (getterUserId, friendId) => {
   try {
-    const db = firebase.firestore();
-    const usersRef = db.collection("Users");
-    const docRef = usersRef.doc(getterUserId);
-    const friendsCollectionRef = docRef.collection("Friends");
-    const existingDocs = await friendsCollectionRef
+    const existingDocs = await firestore()
+      .collection("Users")
+      .doc(getterUserId)
+      .collection("Friends")
       .where("friendId", "==", friendId)
       .get();
 
     return !existingDocs.empty;
   } catch (error) {
-    console.error("Error while checking the existence of the document:", error);
+    console.error("Error checkIfFriendIsAlreadyInFriendsList:", error);
     return false;
   }
 };
 
 const checkIfFriendAlreadyHasRequest = async (friendId) => {
   try {
-    const db = firebase.firestore();
-    const usersRef = db.collection("Users");
-    const docRef = usersRef.doc(friendId);
-    const friendsCollectionRef = docRef.collection("friendRequests");
-    const existingDocs = await friendsCollectionRef
-      .where("user_requested_email", "==", auth().currentUser.email)
+    const notificationType = "friendRequest";
+    const friendRequests = await firestore()
+      .collection("Users")
+      .doc(friendId)
+      .collection("Notifications")
+      .where("notificationType", "==", notificationType)
+      .where("creatorId", "==", auth().currentUser.uid)
       .get();
-    return !existingDocs.empty;
+
+    return !friendRequests.empty;
   } catch (error) {
-    console.error("Error while checking the existence of the document:", error);
+    console.error("Error checkIfFriendAlreadyHasRequest:", error);
     return false;
   }
 };
@@ -60,7 +43,7 @@ async function deleteFriendRequest(friendRequestId) {
     await firestore()
       .collection("Users")
       .doc(currentUserUid)
-      .collection("friendRequests")
+      .collection("Notifications")
       .doc(friendRequestId)
       .delete();
 
@@ -74,44 +57,47 @@ async function deleteFriendRequest(friendRequestId) {
   }
 }
 
-export async function addUserToFriends(friendEmail) {
+export async function addUserToFriends(creatorId) {
   try {
     const currentUserUid = auth().currentUser.uid;
 
     const querySnapshot = await firestore()
       .collection("Users")
-      .where("email", "==", friendEmail)
-      .limit(1)
+      .doc(creatorId)
       .get();
-    if (querySnapshot.size === 0) {
+    if (!querySnapshot.exists) {
       throw new Error("Friend with the provided email address not found");
     }
 
-    const friendId = querySnapshot.docs[0].ref.id;
+    console.log("Znaleziono frienda");
 
-    const friendRequestCollectionDocs = await firestore()
+    const FriendRequestQuerySnapshot = await firestore()
       .collection("Users")
       .doc(currentUserUid)
-      .collection("friendRequests")
+      .collection("Notifications")
+      .where("creatorId", "==", creatorId)
+      .where("notificationType", "==", "friendRequest")
+      .limit(1)
       .get();
 
-    const friendRequestId = friendRequestCollectionDocs._docs[0].ref.id;
+    if (!FriendRequestQuerySnapshot.empty) {
+      // If the query returned any documents
+      const friendRequestDocRef = FriendRequestQuerySnapshot.docs[0].ref;
 
-    const updatedFriendRequest = await firestore()
-      .collection("Users")
-      .doc(currentUserUid)
-      .collection("friendRequests")
-      .doc(friendRequestId)
-      .update({
+      // Now update the document using the reference
+      await friendRequestDocRef.update({
         isConfirmed: true,
       });
 
-    console.log("Successfully updated isConfirmed to true in the database");
+      console.log("Friend request confirmed.");
+    } else {
+      console.log("Friend request not found.");
+    }
 
     //checking if users may be already added to their friendsList
     const checkCurrentUser = await checkIfFriendIsAlreadyInFriendsList(
       currentUserUid,
-      friendId
+      creatorId
     );
     if (!checkCurrentUser) {
       const updatedUsersFriendList = await firestore()
@@ -119,21 +105,21 @@ export async function addUserToFriends(friendEmail) {
         .doc(currentUserUid)
         .collection("Friends")
         .add({
-          friendId: friendId,
+          friendId: creatorId,
         });
     } else {
       console.log("Current user already has this friend in their friendsList");
     }
 
     const checkFriend = await checkIfFriendIsAlreadyInFriendsList(
-      friendId,
+      creatorId,
       currentUserUid
     );
 
     if (!checkFriend) {
       const updatedFriendsFriendList = await firestore()
         .collection("Users")
-        .doc(friendId)
+        .doc(creatorId)
         .collection("Friends")
         .add({
           friendId: currentUserUid,
@@ -147,7 +133,7 @@ export async function addUserToFriends(friendEmail) {
     console.log("Successfully updated the friends list");
 
     //delete the friend request
-    deleteFriendRequest(friendRequestId);
+    deleteFriendRequest(FriendRequestQuerySnapshot.docs[0].ref.id);
   } catch (error) {
     console.log(`Error while updating friends: ${error}`);
     throw error;
@@ -167,7 +153,7 @@ export async function sendFriendRequest(email) {
       throw new Error("Friend with the provided email address not found");
     }
     const friendId = querySnapshot.docs[0].ref.id;
-
+    console.log(`Id frienda: ${friendId}`);
     //check if he already is in friends list
     const checkCurrentUser = await checkIfFriendIsAlreadyInFriendsList(
       currentUserUid,
@@ -183,10 +169,12 @@ export async function sendFriendRequest(email) {
         await firestore()
           .collection("Users")
           .doc(friendId)
-          .collection("friendRequests")
+          .collection("Notifications")
           .add({
+            notificationType: "friendRequest",
             isConfirmed: false,
-            user_requested_email: auth().currentUser.email,
+            creatorId: auth().currentUser.uid,
+            date: firestore.FieldValue.serverTimestamp(),
           });
       } else {
         console.log("Already has invitation");
@@ -222,4 +210,20 @@ export async function getInfoAboutUser(userId) {
   const userData = userRef.data();
   userData.profileImgUrl = await getProfilePicture(userId);
   return userData;
+}
+
+export async function declineInvitation(creatorId) {
+  try {
+    const colRef = await firestore()
+      .collection("Users")
+      .doc(auth().currentUser.uid)
+      .collection("Notifications")
+      .where("creatorId", "==", creatorId)
+      .where("notificationType", "==", "friendRequest")
+      .limit(1)
+      .get();
+    await colRef.docs[0].ref.delete();
+  } catch (e) {
+    console.log(`Error while declining invitation ${e}`);
+  }
 }
