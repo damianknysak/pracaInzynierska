@@ -13,7 +13,6 @@ import auth from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { PencilSquareIcon } from "react-native-heroicons/outline";
-import useAuth from "../hooks/useAuth";
 import Header from "../components/Profile/Header";
 import ProfileStats from "../components/Profile/ProfileStats";
 import { getInfoAboutUser } from "../utils/firebaseUtils";
@@ -22,9 +21,7 @@ const ProfileScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [profilePic, setProfilePic] = useState("");
   const [userStats, setUserStats] = useState({});
-
-  const { user } = useAuth();
-
+  const [displayName, setDisplayName] = useState();
   const selectImage = async () => {
     try {
       var ImagePicker = require("react-native-image-picker");
@@ -36,6 +33,7 @@ const ProfileScreen = () => {
         maxHeight: 200,
       });
       if (pickedImage.didCancel) return;
+
       return pickedImage.assets[0];
     } catch (error) {
       console.log(error);
@@ -76,6 +74,7 @@ const ProfileScreen = () => {
       const currentUserUid = auth().currentUser.uid;
       const userInfo = await getInfoAboutUser(currentUserUid);
       setProfilePic(userInfo.profileImgUrl);
+      setDisplayName(`${userInfo.firstName} ${userInfo.lastName}`);
     } catch (error) {
       console.log(error);
     }
@@ -150,7 +149,7 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </View>
           <View className="mt-4">
-            <Text className="text-white text-xl">{user.displayName}</Text>
+            <Text className="text-white text-xl">{displayName}</Text>
           </View>
         </View>
         <ProfileStats />

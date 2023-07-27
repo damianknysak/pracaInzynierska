@@ -6,9 +6,9 @@ import PhotoProps from "../Gallery/PhotoProps";
 import { PhotoIcon } from "react-native-heroicons/outline";
 import moment from "moment";
 import "moment/locale/pl";
-const ImageView = ({ item }) => {
+const ImageView = ({ item, toastRef, onRefresh }) => {
   const [imgUrl, setImgUrl] = useState();
-
+  const [toBeDeleted, setToBeDeleted] = useState(false);
   const imgURLToDownloadURL = async (img) => {
     const currentUserUid = auth().currentUser.uid;
     const reference = storage().ref(
@@ -33,20 +33,28 @@ const ImageView = ({ item }) => {
   }, []);
 
   return (
-    <View className="items-center bg-black/50 rounded-xl my-2">
-      <View className="flex-row space-x-1 items-center justify-center my-2 ">
-        <PhotoIcon size={25} color="white" />
-        <Text className="text-white">
-          Dodałeś zdjęcie {moment(item.date.toDate()).fromNow()}
-        </Text>
-      </View>
-      <PhotoProps item={item} />
-      {imgUrl ? (
-        <Image className="w-full aspect-square" source={{ uri: imgUrl }} />
-      ) : (
-        <View className="w-full aspect-square bg-black/50 rounded"></View>
+    <>
+      {toBeDeleted || (
+        <View className="items-center bg-black/50 rounded-xl my-2">
+          <View className="flex-row space-x-1 items-center justify-center my-2 ">
+            <PhotoIcon size={25} color="white" />
+            <Text className="text-white">
+              Dodałeś zdjęcie {moment(item.date.toDate()).fromNow()}
+            </Text>
+          </View>
+          <PhotoProps
+            item={item}
+            toastRef={toastRef}
+            setDelete={setToBeDeleted}
+          />
+          {imgUrl ? (
+            <Image className="w-full aspect-square" source={{ uri: imgUrl }} />
+          ) : (
+            <View className="w-full aspect-square bg-black/50 rounded"></View>
+          )}
+        </View>
       )}
-    </View>
+    </>
   );
 };
 

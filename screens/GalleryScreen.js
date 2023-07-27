@@ -18,6 +18,8 @@ import { useRef } from "react";
 import { LinearGradient } from "react-native-svg";
 import { PhotoIcon } from "react-native-heroicons/outline";
 import PhotoProps from "../components/Gallery/PhotoProps";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "../components/Shared/CustomToast";
 
 const GalleryScreen = () => {
   const width = Dimensions.get("window").width;
@@ -27,6 +29,9 @@ const GalleryScreen = () => {
 
   const navigation = useNavigation();
   const { user } = useAuth();
+
+  const [refreshGalleryArray, setRefreshGalleryArray] = useState(false);
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -50,39 +55,42 @@ const GalleryScreen = () => {
     return await reference.getDownloadURL();
   };
 
+  const getUserImages = async () => {
+    try {
+      setLoading(true);
+
+      const userDocument = firestore()
+        .collection("Users")
+        .doc(user.uid)
+        .collection("Images")
+        .orderBy("date", "desc");
+
+      const querySnapshot = await userDocument.get();
+      const imagesList = querySnapshot.docs.map((doc) => doc.data());
+
+      const updatedImagesList = await Promise.all(
+        imagesList.map(async (img) => {
+          const newURL = await imgURLToDownloadURL(img);
+          img.downloadUrl = newURL;
+
+          return img;
+        })
+      );
+      setGalleryArray(updatedImagesList);
+
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const getUserImages = async () => {
-      try {
-        setLoading(true);
-
-        const userDocument = firestore()
-          .collection("Users")
-          .doc(user.uid)
-          .collection("Images")
-          .orderBy("date", "desc");
-
-        const querySnapshot = await userDocument.get();
-        const imagesList = querySnapshot.docs.map((doc) => doc.data());
-
-        const updatedImagesList = await Promise.all(
-          imagesList.map(async (img) => {
-            const newURL = await imgURLToDownloadURL(img);
-            img.downloadUrl = newURL;
-
-            return img;
-          })
-        );
-        setGalleryArray(updatedImagesList);
-
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.log(error);
-      }
-    };
-
-    getUserImages();
-  }, []);
+    if (refreshGalleryArray || galleryArray.length == 0) {
+      getUserImages();
+      setRefreshGalleryArray(false);
+    }
+  }, [refreshGalleryArray]);
 
   const topRef = useRef();
   const thumbRef = useRef();
@@ -114,7 +122,11 @@ const GalleryScreen = () => {
   const renderItemFullScreen = ({ item }) => {
     return (
       <View className="w-screen h-100vh">
-        <PhotoProps item={item} />
+        <PhotoProps
+          refreshSetter={setRefreshGalleryArray}
+          item={item}
+          toastRef={toastRef}
+        />
         <Image
           style={[StyleSheet.absoluteFillObject]}
           source={{ uri: item.downloadUrl }}
@@ -138,52 +150,56 @@ const GalleryScreen = () => {
       </TouchableOpacity>
     );
   };
+  const toastRef = useRef();
   return (
-    <View className="flex-1 justify-center items-center bg-black/50">
-      {loading ? (
-        <ActivityIndicator
-          className="absolute z-10 top-0 bottom-0 left-0 right-0 m-auto"
-          size={60}
-          color="white"
-        />
-      ) : (
-        <>
-          {galleryArray.length ? (
-            <>
-              <FlatList
-                data={galleryArray}
-                renderItem={renderItemFullScreen}
-                keyExtractor={(item) => item.imgUrl}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                ref={topRef}
-                onMomentumScrollEnd={(ev) => {
-                  setScrollActiveIndex(
-                    Math.floor(ev.nativeEvent.contentOffset.x / width)
-                  );
-                }}
-              />
-              <FlatList
-                className="absolute bottom-10"
-                contentContainerStyle={{ paddingHorizontal: 8 }}
-                data={galleryArray}
-                renderItem={renderItemBottomList}
-                keyExtractor={(item) => item.imgUrl}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                ref={thumbRef}
-              />
-            </>
-          ) : (
-            <View className="items-center">
-              <PhotoIcon size={100} color="white" />
-              <Text className=" text-3xl">Galeria jest pusta</Text>
-            </View>
-          )}
-        </>
-      )}
-    </View>
+    <GestureHandlerRootView>
+      <Toast ref={toastRef} />
+      <View className="h-full w-screen justify-center items-center bg-black/50">
+        {loading ? (
+          <ActivityIndicator
+            className="absolute z-10 top-0 bottom-0 left-0 right-0 m-auto"
+            size={60}
+            color="white"
+          />
+        ) : (
+          <>
+            {galleryArray.length ? (
+              <>
+                <FlatList
+                  data={galleryArray}
+                  renderItem={renderItemFullScreen}
+                  keyExtractor={(item) => item.imgUrl}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  ref={topRef}
+                  onMomentumScrollEnd={(ev) => {
+                    setScrollActiveIndex(
+                      Math.floor(ev.nativeEvent.contentOffset.x / width)
+                    );
+                  }}
+                />
+                <FlatList
+                  className="absolute bottom-10"
+                  contentContainerStyle={{ paddingHorizontal: 8 }}
+                  data={galleryArray}
+                  renderItem={renderItemBottomList}
+                  keyExtractor={(item) => item.imgUrl}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  ref={thumbRef}
+                />
+              </>
+            ) : (
+              <View className="items-center">
+                <PhotoIcon size={100} color="white" />
+                <Text className=" text-3xl">Galeria jest pusta</Text>
+              </View>
+            )}
+          </>
+        )}
+      </View>
+    </GestureHandlerRootView>
   );
 };
 

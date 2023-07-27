@@ -17,6 +17,13 @@ import Geolocation from "@react-native-community/geolocation";
 import { getAddressFromCoordinates } from "../utils/mapsUtils";
 import BottomInfo from "../components/Camera/BottomInfo";
 import { notifyFriends } from "../utils/notifyUtils";
+import {
+  addImgToUser,
+  onSaveCloudPress,
+  onSavePress,
+} from "../utils/imageUtils";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "../components/Shared/CustomToast";
 
 const CameraScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -60,12 +67,14 @@ const CameraScreen = () => {
 
   const getAddress = async () => {
     try {
-      const findAddress = await getAddressFromCoordinates({
-        latitude: positionGeocode.latitude,
-        longitude: positionGeocode.longitude,
-      });
+      if (positionGeocode) {
+        const findAddress = await getAddressFromCoordinates({
+          latitude: positionGeocode.latitude,
+          longitude: positionGeocode.longitude,
+        });
 
-      setAddress(findAddress?.display_name);
+        setAddress(findAddress?.display_name);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -76,34 +85,6 @@ const CameraScreen = () => {
       getAddress();
     }
   }, [positionGeocode]);
-
-  const addImgToUser = async () => {
-    try {
-      const currentUserUid = auth().currentUser.uid;
-      const filename = image.substring(image.lastIndexOf("/") + 1);
-      const latitude = locationStatus ? positionGeocode.latitude || null : null;
-      const longitude = locationStatus
-        ? positionGeocode.longitude || null
-        : null;
-      const curAddress = locationStatus ? address || null : null;
-      const docRef = await firestore()
-        .collection("Users")
-        .doc(currentUserUid)
-        .collection("Images")
-        .add({
-          isPublic: isPublic,
-          imgUrl: filename,
-          latitude: latitude || null,
-          longitude: longitude || null,
-          address: curAddress || null,
-          date: firestore.FieldValue.serverTimestamp(),
-        });
-      //adding notifications
-      isPublic && notifyFriends("imageAdd", docRef.id);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   async function takePicture() {
     if (cameraRef) {
@@ -125,39 +106,7 @@ const CameraScreen = () => {
       }
     }
   }
-
-  async function onSavePress() {
-    if (image) {
-      try {
-        setDownloading(true);
-        await MediaLibrary.createAssetAsync(image);
-        setDownloading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
-
-  async function onSaveCloudPress() {
-    if (image) {
-      try {
-        setUploading(true);
-        const currentUserUid = auth().currentUser.uid;
-        //sending to storage
-        const uri = image;
-        const filename = uri.substring(uri.lastIndexOf("/") + 1);
-        const uploadUri = uri;
-        const task = await storage()
-          .ref(`UsersStorage/${currentUserUid}/cameraImages/${filename}`)
-          .putFile(uploadUri);
-        //adding image to user in DB
-        addImgToUser();
-      } catch (e) {
-        console.error(e);
-      }
-      setUploading(false);
-    }
-  }
+  //image,locationStatus,positionGeocode,address,isPublic, setUploading
 
   if (hasCameraPermission === false) {
     return (
@@ -166,82 +115,99 @@ const CameraScreen = () => {
       </View>
     );
   }
-
+  const toastRef = useRef();
   return (
-    <View className="h-full w-screen relative">
-      {!image ? (
-        <View
-          className={`w-full aspect-${ratio === "20:9" ? "[9/20]" : "[9/16]"}`}
-        >
-          <Camera
-            className="w-full h-full"
-            type={type}
-            flashMode={flash}
-            ref={cameraRef}
-            ratio={ratio}
-          >
-            <SwitchCameraButton
-              onPressFunc={() => {
-                setType(
-                  type == CameraType.back ? CameraType.front : CameraType.back
-                );
-              }}
-            />
-            <FlashButton
-              curFlashState={flash}
-              onPressFunc={() => {
-                setFlash(
-                  flash === Camera.Constants.FlashMode.off
-                    ? Camera.Constants.FlashMode.on
-                    : Camera.Constants.FlashMode.off
-                );
-              }}
-            />
-            <TakePictureButton takePicture={takePicture} />
-            <GalleryButton />
-          </Camera>
-        </View>
-      ) : (
-        <>
-          <GoBackButton
-            onPressFunc={() => {
-              setImage(null);
-              setDownloading(false);
-              setUploading(false);
-            }}
-          />
+    <GestureHandlerRootView>
+      <Toast ref={toastRef} />
+      <View className="h-full w-screen relative">
+        {!image ? (
           <View
             className={`w-full aspect-${
               ratio === "20:9" ? "[9/20]" : "[9/16]"
             }`}
           >
-            <Image className="w-full h-full" source={{ uri: image }} />
+            <Camera
+              className="w-full h-full"
+              type={type}
+              flashMode={flash}
+              ref={cameraRef}
+              ratio={ratio}
+            >
+              <SwitchCameraButton
+                onPressFunc={() => {
+                  setType(
+                    type == CameraType.back ? CameraType.front : CameraType.back
+                  );
+                }}
+              />
+              <FlashButton
+                curFlashState={flash}
+                onPressFunc={() => {
+                  setFlash(
+                    flash === Camera.Constants.FlashMode.off
+                      ? Camera.Constants.FlashMode.on
+                      : Camera.Constants.FlashMode.off
+                  );
+                }}
+              />
+              <TakePictureButton takePicture={takePicture} />
+              <GalleryButton />
+            </Camera>
           </View>
-          <BottomInfo
-            address={address}
-            isPublic={isPublic}
-            locationStatus={locationStatus}
-          />
+        ) : (
+          <>
+            <GoBackButton
+              onPressFunc={() => {
+                setImage(null);
+                setDownloading(false);
+                setUploading(false);
+              }}
+            />
+            <View
+              className={`w-full aspect-${
+                ratio === "20:9" ? "[9/20]" : "[9/16]"
+              }`}
+            >
+              <Image className="w-full h-full" source={{ uri: image }} />
+            </View>
+            <BottomInfo
+              address={address}
+              isPublic={isPublic}
+              locationStatus={locationStatus}
+            />
 
-          <PropertySwitches
-            isPublic={isPublic}
-            locationStatus={locationStatus}
-            onEyePress={() => {
-              setIsPublic(!isPublic);
-            }}
-            onLocationPress={() => {
-              setLocationStatus(!locationStatus);
-            }}
-          />
-          <BottomPanel
-            downloading={downloading}
-            uploading={uploading}
-            onSavePress={onSavePress}
-            onSaveCloudPress={onSaveCloudPress}
-          />
-        </>
-      )}
-    </View>
+            <PropertySwitches
+              isPublic={isPublic}
+              locationStatus={locationStatus}
+              onEyePress={() => {
+                setIsPublic(!isPublic);
+              }}
+              onLocationPress={() => {
+                setLocationStatus(!locationStatus);
+              }}
+            />
+            <BottomPanel
+              downloading={downloading}
+              uploading={uploading}
+              onSavePress={() => {
+                onSavePress(image, setDownloading, toastRef);
+              }}
+              onSaveCloudPress={() => {
+                onSaveCloudPress(
+                  image,
+                  locationStatus,
+                  positionGeocode,
+                  address,
+                  isPublic,
+                  setUploading,
+                  toastRef
+                );
+              }}
+            />
+          </>
+        )}
+      </View>
+    </GestureHandlerRootView>
   );
 };
 

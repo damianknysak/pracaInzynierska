@@ -4,7 +4,13 @@ import { BellIcon, CameraIcon, LinkIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
 import { notifyFriends } from "../../utils/notifyUtils";
 
-const Header = ({ headerMenu, setHeaderMenu, userName, navigation }) => {
+const Header = ({
+  headerMenu,
+  setHeaderMenu,
+  userName,
+  navigation,
+  notificationsList,
+}) => {
   return (
     <View>
       <View className="flex-row justify-between mx-3 items-center">
@@ -22,10 +28,21 @@ const Header = ({ headerMenu, setHeaderMenu, userName, navigation }) => {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Notification");
+            navigation.navigate("Notification", { notificationsList });
           }}
-          className="bg-black/50 p-2 items-center justify-center rounded-xl border border-gray-600"
+          className="relative bg-black/50 p-2 items-center justify-center rounded-xl border border-gray-600"
         >
+          {notificationsList.length > 0 && (
+            <View
+              style={{}}
+              className="absolute w-4 h-4 -right-1 -bottom-1 rounded-full bg-red-600"
+            >
+              <Text className="text-xs text-white text-center">
+                {notificationsList.length}
+              </Text>
+            </View>
+          )}
+
           <BellIcon size={20} color="white" />
         </TouchableOpacity>
       </View>

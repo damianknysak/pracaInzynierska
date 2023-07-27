@@ -5,7 +5,6 @@ import auth from "@react-native-firebase/auth";
 import { firebase } from "@react-native-firebase/app";
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import storage from "@react-native-firebase/storage";
 const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [initializing, setInitializing] = useState(true);
@@ -26,13 +25,23 @@ export const AuthProvider = ({ children }) => {
     return subscriber;
   }, []);
 
-  async function onGoogleButtonPress() {
-    const { idToken } = await GoogleSignin.signIn();
+  async function onGoogleButtonPress(toastRef) {
+    try {
+      const { idToken } = await GoogleSignin.signIn();
 
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-    const user_sign_in = auth().signInWithCredential(googleCredential);
+      const user_sign_in = auth().signInWithCredential(googleCredential);
+    } catch (e) {
+      console.log(e);
+      toastRef.current.show({
+        type: "error",
+        text: "Błąd przy logowaniu przez Google",
+        duration: 2000,
+      });
+    }
   }
+
   //check if google authenticated user is in db
   //had to do that way bc couldnt get access to user.providerData.providerId
   useEffect(() => {
@@ -93,11 +102,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const onLoginButtonPress = async (email, password) => {
+  const onLoginButtonPress = async (email, password, toastRef) => {
     try {
+      if (!email || !password) {
+        toastRef.current.show({
+          type: "warning",
+          text: "Wypełnij pola by się zalogować",
+          duration: 2000,
+        });
+        return;
+      }
       await firebase.auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
-      alert(error.message);
+      console.log(error);
+      toastRef.current.show({
+        type: "warning",
+        text: error.message.includes("[auth/invalid-email]")
+          ? "Błędny format e-mail"
+          : error.message.includes("[auth/user-not-found]")
+          ? "Użytkownik z takim e-mailem nie istnieje"
+          : error.message.includes("[auth/wrong-password]")
+          ? "Błędne hasło"
+          : "",
+        duration: 2000,
+      });
     }
   };
 
@@ -105,38 +133,52 @@ export const AuthProvider = ({ children }) => {
     firstName,
     lastName,
     email,
-    password
+    password,
+    toastRef
   ) => {
     try {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          firebase
-            .auth()
-            .currentUser.sendEmailVerification({
-              handleCodeInApp: true,
-              url: "https://damianinzynierka.firebaseapp.com",
-            })
-            .then(() => {
-              alert("Verifiation email sent");
-            })
-            .then(() => {
-              firestore()
-                .collection("Users")
-                .doc(firebase.auth().currentUser.uid)
-                .set({
-                  firstName,
-                  lastName,
-                  email,
-                });
-            })
-            .catch((error) => {
-              alert(`${error.message}`);
-            });
+      if (firstName && lastName && email && password) {
+        await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            firebase
+              .auth()
+              .currentUser.sendEmailVerification({
+                handleCodeInApp: true,
+                url: "https://damianinzynierka.firebaseapp.com",
+              })
+              .then(() => {
+                firestore()
+                  .collection("Users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .set({
+                    firstName,
+                    lastName,
+                    email,
+                  });
+              })
+              .catch((error) => {
+                alert(`${error.message}`);
+              });
+          });
+      } else {
+        toastRef.current.show({
+          type: "warning",
+          text: "Wszystkie pola muszą być wypełnione",
+          duration: 2000,
         });
+      }
     } catch (error) {
-      alert(`${error.message}`);
+      toastRef.current.show({
+        type: "warning",
+        text: error.message.includes("[auth/invalid-email]")
+          ? "Błędny format e-mail"
+          : error.message.includes("[auth/weak-password]")
+          ? "Hasło musi mieć conajmniej 6 znaków"
+          : error.message,
+        duration: 2000,
+      });
     }
   };
 

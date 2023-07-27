@@ -47,3 +47,22 @@ export function subscribeToNotifications(callback) {
 
   return unsubscribe;
 }
+
+export async function deleteNotification(notification) {
+  try {
+    const docRef = await firestore()
+      .collection("Users")
+      .doc(auth().currentUser.uid)
+      .collection("Notifications")
+      .where("creatorId", "==", notification.creatorId)
+      .where("actionId", "==", notification.actionId)
+      .limit(1)
+      .get();
+
+    if (!docRef.empty) {
+      await docRef.docs[0].ref.delete();
+    }
+  } catch (e) {
+    console.log(`Error while deleting notification ${e}`);
+  }
+}

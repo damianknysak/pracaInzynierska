@@ -6,6 +6,7 @@ import {
   CloudArrowDownIcon,
   PaperAirplaneIcon,
 } from "react-native-heroicons/outline";
+import { useEffect } from "react";
 
 const BottomPanel = ({
   uploading,
@@ -16,6 +17,7 @@ const BottomPanel = ({
   return (
     <View className="flex-row z-10 absolute w-full h-20 bottom-0 bg-gray-800 rounded-2xl items-center justify-around">
       <TouchableOpacity
+        disabled={downloading}
         onPress={onSavePress}
         className="bg-black/50 p-4 px-5 flex-row items-center space-x-1 rounded-full"
       >
@@ -28,6 +30,7 @@ const BottomPanel = ({
         <Text className="text-white font-semibold">Pobierz</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        disabled={uploading}
         onPress={onSaveCloudPress}
         className="bg-black/50 p-4 px-5 flex-row items-center space-x-1 rounded-full"
       >

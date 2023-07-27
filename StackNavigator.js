@@ -20,60 +20,65 @@ import {
 import TabNavigator from "./TabNavigator";
 import CameraScreen from "./screens/CameraScreen";
 import GalleryScreen from "./screens/GalleryScreen";
+import { NotificationProvider } from "./hooks/useNotification";
+import { HomeActivityProvider } from "./hooks/useHomeActivity";
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   const { user } = useAuth();
+
   return (
     <>
       {user ? (
-        <>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="TabNavigator"
-              component={TabNavigator}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="Notification"
-              component={NotificationScreen}
-              options={{
-                presentation: "containedTransparentModal",
-                headerShown: false,
-              }}
-            />
+        <HomeActivityProvider>
+          <NotificationProvider>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="TabNavigator"
+                component={TabNavigator}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Notification"
+                component={NotificationScreen}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
 
-            <Stack.Screen
-              name="AddFriend"
-              component={AddFriendScreen}
-              options={{
-                presentation: "containedTransparentModal",
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="Camera"
-              component={CameraScreen}
-              options={{
-                headerShown: false,
-                navigationBarColor: "transparent",
-                navigationBarHidden: true,
-              }}
-            />
-            <Stack.Screen
-              name="Gallery"
-              component={GalleryScreen}
-              options={{
-                headerShown: false,
-                navigationBarColor: "transparent",
-                navigationBarHidden: true,
-              }}
-            />
-          </Stack.Navigator>
-        </>
+              <Stack.Screen
+                name="AddFriend"
+                component={AddFriendScreen}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Camera"
+                component={CameraScreen}
+                options={{
+                  headerShown: false,
+                  navigationBarColor: "transparent",
+                  navigationBarHidden: true,
+                }}
+              />
+              <Stack.Screen
+                name="Gallery"
+                component={GalleryScreen}
+                options={{
+                  headerShown: false,
+                  navigationBarColor: "transparent",
+                  navigationBarHidden: true,
+                }}
+              />
+            </Stack.Navigator>
+          </NotificationProvider>
+        </HomeActivityProvider>
       ) : (
         <>
           <Stack.Navigator initialRouteName="Login">

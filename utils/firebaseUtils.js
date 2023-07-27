@@ -140,7 +140,7 @@ export async function addUserToFriends(creatorId) {
   }
 }
 
-export async function sendFriendRequest(email) {
+export async function sendFriendRequest(email, toastRef) {
   try {
     const currentUserUid = auth().currentUser.uid;
 
@@ -150,7 +150,13 @@ export async function sendFriendRequest(email) {
       .limit(1)
       .get();
     if (querySnapshot.size === 0) {
-      throw new Error("Friend with the provided email address not found");
+      toastRef.current.show({
+        type: "warning",
+        text: "Błędny e-mail",
+        duration: 2000,
+      });
+      console.log("Friend with the provided email address not found");
+      return;
     }
     const friendId = querySnapshot.docs[0].ref.id;
     console.log(`Id frienda: ${friendId}`);
@@ -176,10 +182,26 @@ export async function sendFriendRequest(email) {
             creatorId: auth().currentUser.uid,
             date: firestore.FieldValue.serverTimestamp(),
           });
+        toastRef.current.show({
+          type: "success",
+          text: "Zaproszenie wysłane",
+          duration: 2000,
+        });
       } else {
+        toastRef.current.show({
+          type: "warning",
+          text: "Znajomy już zaproszony",
+          duration: 2000,
+        });
         console.log("Already has invitation");
       }
     } else {
+      toastRef.current.show({
+        type: "error",
+        text: "To jest już twój znajomy",
+        duration: 2000,
+      });
+
       console.log("Already in friends list");
     }
   } catch (error) {
