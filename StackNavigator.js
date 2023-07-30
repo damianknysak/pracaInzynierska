@@ -22,6 +22,7 @@ import CameraScreen from "./screens/CameraScreen";
 import GalleryScreen from "./screens/GalleryScreen";
 import { NotificationProvider } from "./hooks/useNotification";
 import { HomeActivityProvider } from "./hooks/useHomeActivity";
+import CustomDialogScreen from "./screens/CustomDialogScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -49,7 +50,14 @@ const StackNavigator = () => {
                   headerShown: false,
                 }}
               />
-
+              <Stack.Screen
+                name="CustomDialog"
+                component={CustomDialogScreen}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
               <Stack.Screen
                 name="AddFriend"
                 component={AddFriendScreen}

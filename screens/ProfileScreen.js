@@ -12,16 +12,21 @@ import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { PencilSquareIcon } from "react-native-heroicons/outline";
+import {
+  ArrowLeftOnRectangleIcon,
+  PencilSquareIcon,
+} from "react-native-heroicons/outline";
 import Header from "../components/Profile/Header";
 import ProfileStats from "../components/Profile/ProfileStats";
 import { getInfoAboutUser } from "../utils/firebaseUtils";
+import useAuth from "../hooks/useAuth";
 
 const ProfileScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [profilePic, setProfilePic] = useState("");
   const [userStats, setUserStats] = useState({});
   const [displayName, setDisplayName] = useState();
+  const { signOut } = useAuth();
   const selectImage = async () => {
     try {
       var ImagePicker = require("react-native-image-picker");
@@ -153,6 +158,15 @@ const ProfileScreen = () => {
           </View>
         </View>
         <ProfileStats />
+        <View className="items-center">
+          <TouchableOpacity
+            onPress={signOut}
+            className="bg-black/50 flex-row items-center mt-4 justify-center space-x-2 py-2 px-4 rounded-lg"
+          >
+            <ArrowLeftOnRectangleIcon color="tomato" size={25} />
+            <Text className="text-white">Wyloguj</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </LinearGradient>
   );

@@ -19,7 +19,7 @@ import Toast from "../components/Shared/CustomToast";
 
 const HomeScreen = () => {
   const [headerMenu, setHeaderMenu] = useState("friends");
-  const { signOut, getCurrentUserInfoDB } = useAuth();
+  const { getCurrentUserInfoDB } = useAuth();
   const [currentUser, setCurrentUser] = useState();
   const navigation = useNavigation();
   const { notificationsList } = useNotification();
@@ -80,9 +80,6 @@ const HomeScreen = () => {
                   <>
                     <MainMenu />
                     <PopularPlaces />
-                    <TouchableOpacity onPress={signOut}>
-                      <Text className="text-yellow-400">Sign out</Text>
-                    </TouchableOpacity>
                   </>
                 )}
               </ScrollView>

@@ -4,7 +4,6 @@ import {
   TouchableWithoutFeedback,
   Text,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import React from "react";
 import {
@@ -18,7 +17,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { useState } from "react";
 import { deleteImage } from "../../utils/imageUtils";
-import CustomModal from "../Shared/CustomModal";
+import { useNavigation } from "@react-navigation/native";
 
 const PhotoProps = ({
   item,
@@ -27,30 +26,8 @@ const PhotoProps = ({
   setDelete = null,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [customModalVisible, setCustomModalVisible] = useState(false);
   const [thisItem, setThisItem] = useState(item);
   const [isPublicUpdating, setIsPublicUpdating] = useState(false);
-  // const handleDelete = () => {
-  //   Alert.alert("Galeria", "Czy jesteś pewny, że chcesz usunąć to zdjęcie ?", [
-  //     {
-  //       text: "Tak",
-  //       onPress: () => {
-  //         deleteImage(item.imgUrl, toastRef);
-  //         refreshSetter && refreshSetter(true);
-  //         setDelete != null && setDelete(true);
-  //       },
-  //     },
-  //     {
-  //       text: "Nie",
-  //       onPress: () => {
-  //         console.log("Nie pressed");
-  //       },
-  //     },
-  //   ]);
-  // };
-  const handleClose = () => {
-    setCustomModalVisible(false);
-  };
 
   const handleDelete = () => {
     deleteImage(item.imgUrl, toastRef);
@@ -80,17 +57,9 @@ const PhotoProps = ({
     }
   };
 
+  const navigation = useNavigation();
   return (
     <>
-      <CustomModal
-        visible={customModalVisible}
-        options={{ type: "slide", from: "bottom" }}
-        duration={300}
-        onClose={handleClose}
-        onConfirm={handleDelete}
-        topic="Usuń zdjęcie"
-        description="Czy jesteś pewien, że chcesz usunąć to zdjęcie ?"
-      />
       <View className="absolute right-5 top-14 z-20">
         <TouchableOpacity
           onPress={() => setModalVisible(!modalVisible)}
@@ -158,7 +127,12 @@ const PhotoProps = ({
                 onPress={
                   // handleDelete
                   () => {
-                    setCustomModalVisible(true);
+                    navigation.navigate("CustomDialog", {
+                      handleDelete,
+                      topic: "Usuń zdjęcie",
+                      description:
+                        "Czy jesteś pewien, że chcesz usunąć to zdjęcie ?",
+                    });
                   }
                 }
                 className="items-center justify-center flex-row bg-red-600 px-3 py-2 space-x-2 my-4 rounded-full"
