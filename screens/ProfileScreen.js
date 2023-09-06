@@ -5,20 +5,20 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, {useState} from "react";
+import {SafeAreaView} from "react-native-safe-area-context";
 import storage from "@react-native-firebase/storage";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { useEffect } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import {useEffect} from "react";
+import {LinearGradient} from "expo-linear-gradient";
 import {
   ArrowLeftOnRectangleIcon,
   PencilSquareIcon,
 } from "react-native-heroicons/outline";
 import Header from "../components/Profile/Header";
 import ProfileStats from "../components/Profile/ProfileStats";
-import { getInfoAboutUser } from "../utils/firebaseUtils";
+import {getInfoAboutUser} from "../utils/firebaseUtils";
 import useAuth from "../hooks/useAuth";
 
 const ProfileScreen = () => {
@@ -26,7 +26,7 @@ const ProfileScreen = () => {
   const [profilePic, setProfilePic] = useState("");
   const [userStats, setUserStats] = useState({});
   const [displayName, setDisplayName] = useState();
-  const { signOut } = useAuth();
+  const {signOut} = useAuth();
   const selectImage = async () => {
     try {
       var ImagePicker = require("react-native-image-picker");
@@ -57,7 +57,7 @@ const ProfileScreen = () => {
         `UsersStorage/${currentUserUid}/profilePicture`
       );
 
-      const { items } = await profilePictureRef.listAll();
+      const {items} = await profilePictureRef.listAll();
 
       const deletePromises = items.map((item) => item.delete());
 
@@ -95,7 +95,7 @@ const ProfileScreen = () => {
       .get();
 
     const count = querySnapshot.size;
-    setUserStats({ ...userStats, imagesCount: count });
+    setUserStats({...userStats, imagesCount: count});
   };
 
   const changeProfileImage = async () => {
@@ -119,8 +119,8 @@ const ProfileScreen = () => {
   return (
     <LinearGradient
       className="flex-1"
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
       colors={["#374151", "#111827"]}
     >
       <SafeAreaView>
@@ -158,12 +158,12 @@ const ProfileScreen = () => {
           </View>
         </View>
         <ProfileStats />
-        <View className="items-center">
+        <View className="items-center m-4">
           <TouchableOpacity
             onPress={signOut}
-            className="bg-black/50 flex-row items-center mt-4 justify-center space-x-2 py-2 px-4 rounded-lg"
+            className="bg-black/50 items-center justify-center rounded-xl w-full flex-row space-x-2 py-3"
           >
-            <ArrowLeftOnRectangleIcon color="tomato" size={25} />
+            <ArrowLeftOnRectangleIcon color="tomato" size={35} />
             <Text className="text-white">Wyloguj</Text>
           </TouchableOpacity>
         </View>

@@ -1,7 +1,7 @@
-import { View, Text, Image, Alert } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import {View, Text, Image, Alert} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
 import * as MediaLibrary from "expo-media-library";
-import { Camera, CameraType } from "expo-camera";
+import {Camera, CameraType} from "expo-camera";
 import TakePictureButton from "../components/Camera/TakePictureButton";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
@@ -9,20 +9,16 @@ import GoBackButton from "../components/Camera/GoBackButton";
 import BottomPanel from "../components/Camera/BottomPanel";
 import FlashButton from "../components/Camera/FlashButton";
 import SwitchCameraButton from "../components/Camera/SwitchCameraButton";
-import { FlipType, manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import {FlipType, manipulateAsync, SaveFormat} from "expo-image-manipulator";
 import firestore from "@react-native-firebase/firestore";
 import GalleryButton from "../components/Camera/GalleryButton";
 import PropertySwitches from "../components/Camera/PropertySwitches";
 import Geolocation from "@react-native-community/geolocation";
-import { getAddressFromCoordinates } from "../utils/mapsUtils";
+import {getAddressFromCoordinates} from "../utils/mapsUtils";
 import BottomInfo from "../components/Camera/BottomInfo";
-import { notifyFriends } from "../utils/notifyUtils";
-import {
-  addImgToUser,
-  onSaveCloudPress,
-  onSavePress,
-} from "../utils/imageUtils";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {notifyFriends} from "../utils/notifyUtils";
+import {addImgToUser, onSaveCloudPress, onSavePress} from "../utils/imageUtils";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Toast from "../components/Shared/CustomToast";
 
 const CameraScreen = () => {
@@ -44,12 +40,12 @@ const CameraScreen = () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setHasCameraPermission(cameraStatus.status === "granted");
-      const ratios = await cameraRef.current.getSupportedRatiosAsync();
+      // const ratios = await cameraRef.current.getSupportedRatiosAsync();
 
-      if (ratios.indexOf("20:9") < 0) {
-        setRatio("16:9");
-      }
-
+      // if (ratios.indexOf("20:9") < 0) {
+      //   setRatio("16:9");
+      // }
+      setRatio("20:9");
       Geolocation.getCurrentPosition((pos) => {
         const crd = pos.coords;
         setPositionGeocode({
@@ -59,6 +55,7 @@ const CameraScreen = () => {
       });
     } catch (e) {
       console.log(`First configuration fail: ${e}`);
+      return;
     }
   }
   useEffect(() => {
@@ -94,8 +91,8 @@ const CameraScreen = () => {
         if (type === CameraType.front) {
           let photo = await manipulateAsync(
             data.localUri || data.uri,
-            [{ rotate: 180 }, { flip: FlipType.Vertical }],
-            { compress: 1, format: SaveFormat.JPEG }
+            [{rotate: 180}, {flip: FlipType.Vertical}],
+            {compress: 1, format: SaveFormat.JPEG}
           );
           setImage(photo.uri);
         } else {
@@ -168,7 +165,7 @@ const CameraScreen = () => {
                 ratio === "20:9" ? "[9/20]" : "[9/16]"
               }`}
             >
-              <Image className="w-full h-full" source={{ uri: image }} />
+              <Image className="w-full h-full" source={{uri: image}} />
             </View>
             <BottomInfo
               address={address}

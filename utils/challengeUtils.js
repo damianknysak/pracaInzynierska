@@ -25,3 +25,24 @@ export async function deleteChallenge(item, toastRef) {
     console.log(`Error while deleting challenge ${e}`);
   }
 }
+
+export async function getChallengesList() {
+  try {
+    const colRef = await firestore()
+      .collection("Challenges")
+      .where("creatorId", "==", auth().currentUser.uid)
+      .orderBy("date")
+      .get();
+    const challenges = colRef.docs
+      .map((doc) => {
+        let challengeObject = doc.data();
+        challengeObject.id = doc.id;
+        return challengeObject;
+      })
+      .reverse();
+
+    return challenges;
+  } catch (e) {
+    console.log(`Error while getFriendsList ${e}`);
+  }
+}

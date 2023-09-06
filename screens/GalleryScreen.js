@@ -9,16 +9,16 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, {useEffect, useState} from "react";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
-import { useRef } from "react";
-import { LinearGradient } from "react-native-svg";
-import { PhotoIcon } from "react-native-heroicons/outline";
+import {useRef} from "react";
+import {LinearGradient} from "react-native-svg";
+import {PhotoIcon} from "react-native-heroicons/outline";
 import PhotoProps from "../components/Gallery/PhotoProps";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Toast from "../components/Shared/CustomToast";
 
 const GalleryScreen = () => {
@@ -28,7 +28,7 @@ const GalleryScreen = () => {
   const [galleryArray, setGalleryArray] = useState([]);
 
   const navigation = useNavigation();
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   const [refreshGalleryArray, setRefreshGalleryArray] = useState(false);
 
@@ -119,7 +119,7 @@ const GalleryScreen = () => {
       });
     }
   };
-  const renderItemFullScreen = ({ item }) => {
+  const renderItemFullScreen = ({item}) => {
     return (
       <View className="w-screen h-100vh">
         <PhotoProps
@@ -129,13 +129,13 @@ const GalleryScreen = () => {
         />
         <Image
           style={[StyleSheet.absoluteFillObject]}
-          source={{ uri: item.downloadUrl }}
+          source={{uri: item.downloadUrl}}
         />
       </View>
     );
   };
 
-  const renderItemBottomList = ({ item, index }) => {
+  const renderItemBottomList = ({item, index}) => {
     return (
       <TouchableOpacity
         onPress={() => setScrollActiveIndex(index)}
@@ -145,7 +145,7 @@ const GalleryScreen = () => {
       >
         <Image
           className="w-20 h-20 rounded-xl"
-          source={{ uri: item.downloadUrl }}
+          source={{uri: item.downloadUrl}}
         />
       </TouchableOpacity>
     );
@@ -181,7 +181,7 @@ const GalleryScreen = () => {
                 />
                 <FlatList
                   className="absolute bottom-10"
-                  contentContainerStyle={{ paddingHorizontal: 8 }}
+                  contentContainerStyle={{paddingHorizontal: 8}}
                   data={galleryArray}
                   renderItem={renderItemBottomList}
                   keyExtractor={(item) => item.imgUrl}

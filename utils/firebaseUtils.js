@@ -214,7 +214,7 @@ const getProfilePicture = async (userId) => {
     const profilePictureRef = storage().ref(
       `UsersStorage/${userId}/profilePicture`
     );
-    const { items } = await profilePictureRef.list({ maxResults: 1 });
+    const {items} = await profilePictureRef.list({maxResults: 1});
     if (items.length > 0) {
       const profileImageRef = items[0];
       return await profileImageRef.getDownloadURL();
@@ -247,5 +247,26 @@ export async function declineInvitation(creatorId) {
     await colRef.docs[0].ref.delete();
   } catch (e) {
     console.log(`Error while declining invitation ${e}`);
+  }
+}
+
+export async function getFriendsList() {
+  try {
+    const colRef = await firestore()
+      .collection("Users")
+      .doc(auth().currentUser.uid)
+      .collection("Friends")
+      .get();
+    const friendsIds = colRef.docs.map((doc) => doc.data().friendId);
+    let friendsList = [];
+    await Promise.all(
+      friendsIds.map(async (id) => {
+        const user = await getInfoAboutUser(id);
+        friendsList.push(user);
+      })
+    );
+    return friendsList;
+  } catch (e) {
+    console.log(`Error while getFriendsList ${e}`);
   }
 }

@@ -1,17 +1,17 @@
-import { View, Text } from "react-native";
+import {View, Text} from "react-native";
 import React from "react";
 import useAuth from "./hooks/useAuth";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import AddFriendScreen from "./screens/AddFriendScreen";
 import MapsScreen from "./screens/MapsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeIcon } from "react-native-heroicons/solid";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import {HomeIcon} from "react-native-heroicons/solid";
 import {
   Cog8ToothIcon,
   MapPinIcon,
@@ -20,14 +20,15 @@ import {
 import TabNavigator from "./TabNavigator";
 import CameraScreen from "./screens/CameraScreen";
 import GalleryScreen from "./screens/GalleryScreen";
-import { NotificationProvider } from "./hooks/useNotification";
-import { HomeActivityProvider } from "./hooks/useHomeActivity";
+import {NotificationProvider} from "./hooks/useNotification";
+import {HomeActivityProvider} from "./hooks/useHomeActivity";
 import CustomDialogScreen from "./screens/CustomDialogScreen";
+import ProfileListsScreen from "./screens/ProfileListsScreen";
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   return (
     <>
@@ -39,6 +40,14 @@ const StackNavigator = () => {
                 name="TabNavigator"
                 component={TabNavigator}
                 options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ProfileList"
+                component={ProfileListsScreen}
+                options={{
+                  presentation: "containedTransparentModal",
                   headerShown: false,
                 }}
               />

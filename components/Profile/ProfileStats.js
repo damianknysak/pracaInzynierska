@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import {View, Text, TouchableOpacity} from "react-native";
 import React from "react";
 import {
   FireIcon,
@@ -7,15 +7,18 @@ import {
   UserCircleIcon,
 } from "react-native-heroicons/outline";
 import firestore from "@react-native-firebase/firestore";
-import { useEffect } from "react";
+import {useEffect} from "react";
 import auth from "@react-native-firebase/auth";
-import { useState } from "react";
+import {useState} from "react";
+import {useNavigation} from "@react-navigation/native";
+import {getFriendsList} from "../../utils/firebaseUtils";
+import {getChallengesList} from "../../utils/challengeUtils";
 
 const ProfileStats = () => {
   const [challengesCount, setChallengesCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0);
   const [friendsCount, setFriendsCount] = useState(0);
-
+  const navigation = useNavigation();
   const countChallenges = async () => {
     try {
       const querySnapshot = await firestore()
@@ -67,24 +70,39 @@ const ProfileStats = () => {
   return (
     <View>
       <View className="flex-row justify-around mt-4">
-        <View className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("ProfileList", {type: "challenges"});
+          }}
+          className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12"
+        >
           <FireIcon size={25} color="orange" />
           <Text className="text-white">Wyzwania: {challengesCount}</Text>
-        </View>
-        <View className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12">
+        </TouchableOpacity>
+        <TouchableOpacity
+          // onPress={() => {
+          //   navigation.navigate("Gallery");
+          // }}
+          className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12"
+        >
           <PhotoIcon size={25} color="white" />
           <Text className="text-white">Zdjęcia: {imagesCount}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View className="flex-row justify-around mt-2">
-        <View className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("ProfileList", {type: "friends"});
+          }}
+          className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12"
+        >
           <UserCircleIcon size={25} color="green" />
           <Text className="text-white">Znajomi: {friendsCount}</Text>
-        </View>
-        <View className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12">
+        </TouchableOpacity>
+        <TouchableOpacity className="bg-black/50 py-4 flex-row items-center rounded-xl justify-center space-x-2 w-5/12">
           <TrophyIcon size={25} color="gold" />
           <Text className="text-white">Lider: 15</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

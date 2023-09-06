@@ -1,12 +1,12 @@
-import React, { createContext, useContext } from "react";
+import React, {createContext, useContext} from "react";
 import "expo-dev-client";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
-import { firebase } from "@react-native-firebase/app";
-import { useEffect, useState } from "react";
+import {firebase} from "@react-native-firebase/app";
+import {useEffect, useState} from "react";
 import firestore from "@react-native-firebase/firestore";
 const AuthContext = createContext({});
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({children}) => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   async function onGoogleButtonPress(toastRef) {
     try {
-      const { idToken } = await GoogleSignin.signIn();
+      const {idToken} = await GoogleSignin.signIn();
 
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
