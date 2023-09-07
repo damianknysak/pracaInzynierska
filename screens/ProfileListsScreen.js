@@ -43,7 +43,7 @@ const ProfileListsScreen = () => {
           colors={["#E5E7EB", "#9CA3AF", "#4B5563"]}
         >
           <Text className="font-bold text-center mt-4 text-lg">
-            {type == "friends" ? "Lista znajomych" : "Lista wyzwań"}
+            {type == "friends" ? "Lista znajomych" : "Twoje wyzwania"}
           </Text>
           <TouchableOpacity
             className="absolute bg-black/50 p-1 items-center justify-center rounded-full right-3 top-3"

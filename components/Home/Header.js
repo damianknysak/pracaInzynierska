@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { BellIcon, CameraIcon, LinkIcon } from "react-native-heroicons/outline";
-import { useNavigation } from "@react-navigation/native";
-import { notifyFriends } from "../../utils/notifyUtils";
+import {View, Text, TouchableOpacity} from "react-native";
+import React, {useState} from "react";
+import {BellIcon, CameraIcon, LinkIcon} from "react-native-heroicons/outline";
+import {useNavigation} from "@react-navigation/native";
+import {notifyFriends} from "../../utils/notifyUtils";
 
 const Header = ({
   headerMenu,
@@ -28,7 +28,7 @@ const Header = ({
         </Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Notification", { notificationsList });
+            navigation.navigate("Notification", {notificationsList});
           }}
           className="relative bg-black/50 p-2 items-center justify-center rounded-xl border border-gray-600"
         >

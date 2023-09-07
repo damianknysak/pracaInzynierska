@@ -15,9 +15,6 @@ import moment from "moment";
 import "moment/locale/pl";
 
 const ChallengesList = ({list}) => {
-  useEffect(() => {
-    console.log(list);
-  }, []);
   return (
     <View>
       {list.map((challenge) => (

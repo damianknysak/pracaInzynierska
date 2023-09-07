@@ -2,14 +2,17 @@
   "expo": {
     "name": "pracaInzynierskaDamianKnysak",
     "slug": "pracaInzynierskaDamianKnysak",
-    "plugins": ["@react-native-google-signin/google-signin",
-    ["expo-media-library",
-    {
-      "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-      "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
-      "isAccessMediaLocationEnabled": true
-    }]
-  ],
+    "plugins": [
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,19 +20,17 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#111111"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-        "config": {
-          "googleMaps": {
-              "apiKey": "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY"
-          }
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY"
+        }
       },
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {

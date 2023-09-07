@@ -8,7 +8,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import AddFriendScreen from "./screens/AddFriendScreen";
 import MapsScreen from "./screens/MapsScreen";
-import SettingsScreen from "./screens/SettingsScreen";
+import ChallengesScreen from "./screens/ChallengesScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {HomeIcon} from "react-native-heroicons/solid";
@@ -24,6 +24,7 @@ import {NotificationProvider} from "./hooks/useNotification";
 import {HomeActivityProvider} from "./hooks/useHomeActivity";
 import CustomDialogScreen from "./screens/CustomDialogScreen";
 import ProfileListsScreen from "./screens/ProfileListsScreen";
+import ChallengeDetailed from "./screens/ChallengeDetailed";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,14 @@ const StackNavigator = () => {
               <Stack.Screen
                 name="ProfileList"
                 component={ProfileListsScreen}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ChallengeDetailed"
+                component={ChallengeDetailed}
                 options={{
                   presentation: "containedTransparentModal",
                   headerShown: false,
