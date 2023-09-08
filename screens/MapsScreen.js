@@ -1,15 +1,19 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import MapView, { Callout, Marker, Polyline } from "react-native-maps";
+import {View, Text, Image, TouchableOpacity} from "react-native";
+import React, {createRef, useEffect, useRef, useState} from "react";
+import MapView, {Callout, Marker, Polyline} from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
-import UserMarkerView from "../components/Maps/UserMarkerView";
+import Toast from "../components/Shared/CustomToast";
 import ChallengeMarkerView from "../components/Maps/ChallengeMarkerView";
 import ChallengeButton from "../components/Maps/ChallengeButton";
 import ChallengeBottomBar from "../components/Maps/ChallengeBottomBar";
 import ConfirmChallengeModal from "../components/Maps/ConfirmChallengeModal";
 import MapViewDirections from "react-native-maps-directions";
 import SaveModal from "../components/Maps/SaveModal";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {useRoute} from "@react-navigation/native";
+import ChallengeStartedView from "../components/Maps/ChallengeStartedView";
 const MapsScreen = () => {
+  const route = useRoute();
   const [position, setPosition] = useState({
     latitude: 50.3318456,
     longitude: 18.0296002,
@@ -28,11 +32,11 @@ const MapsScreen = () => {
   const [pinStart, setPinStart] = useState({});
   const [pinFinish, setPinFinish] = useState({});
   const [confirmationModalActive, setConfirmationModalActive] = useState(false);
-  const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-  const destination = { latitude: 37.771707, longitude: -122.4053769 };
   const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
-  const [toBeSaved, setToBeSaved] = useState(false);
-
+  const toastRef = useRef();
+  useEffect(() => {
+    console.log();
+  }, []);
   useEffect(() => {
     try {
       Geolocation.getCurrentPosition((pos) => {
@@ -102,113 +106,131 @@ const MapsScreen = () => {
   };
 
   return (
-    <View className="relative h-full w-screen bg-red-100">
-      <ChallengeButton
-        color={challenge.active ? "lightgreen" : "orange"}
-        onChallengePress={onChallengePress}
-      />
-      {challenge.active && !challenge.routeType && (
-        <ChallengeBottomBar
-          start={challenge.setStart}
-          finish={challenge.setFinish}
-          onSetPress={onSetChallengePress}
-        />
-      )}
+    <GestureHandlerRootView>
+      {!route.params ? (
+        <View className="relative h-full w-screen bg-red-100">
+          <Toast ref={toastRef} />
+          <ChallengeButton
+            color={challenge.active ? "lightgreen" : "orange"}
+            onChallengePress={onChallengePress}
+          />
+          {challenge.active && !challenge.routeType && (
+            <ChallengeBottomBar
+              start={challenge.setStart}
+              finish={challenge.setFinish}
+              onSetPress={onSetChallengePress}
+            />
+          )}
 
-      <ConfirmChallengeModal
-        isActive={confirmationModalActive}
-        setIsActive={setConfirmationModalActive}
-        googleMapRoutePress={() => {
-          setChallenge((prevState) => ({
-            ...prevState,
-            routeType: "google",
-          }));
-          setConfirmationModalActive(false);
-        }}
-        geodesicRoutePress={() => {
-          setChallenge((prevState) => ({
-            ...prevState,
-            routeType: "straight",
-          }));
-          setConfirmationModalActive(false);
-        }}
-      />
-      {challenge.routeType && (
-        <SaveModal challenge={challenge} onCancelPress={resetChallengeValues} />
-      )}
-
-      <MapView
-        className="w-full h-full"
-        zoomEnabled={true}
-        region={{
-          latitude: position.latitude,
-          longitude: position.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        {challenge.routeType == "google" && (
-          <MapViewDirections
-            origin={{
-              latitude: challenge.startLatitude,
-              longitude: challenge.startLongitude,
-            }}
-            destination={{
-              latitude: challenge.finishLatitude,
-              longitude: challenge.finishLongitude,
-            }}
-            strokeWidth={3}
-            strokeColor="hotpink"
-            apikey={GOOGLE_MAPS_APIKEY}
-            tappable={true}
-            onPress={() => {
-              console.log("Polyline pressed");
-            }}
-            onReady={(result) => {
+          <ConfirmChallengeModal
+            isActive={confirmationModalActive}
+            setIsActive={setConfirmationModalActive}
+            googleMapRoutePress={(transportType) => {
               setChallenge((prevState) => ({
                 ...prevState,
-                distance: result.distance,
+                routeType: "google",
+                transportType: transportType,
               }));
+              setConfirmationModalActive(false);
+            }}
+            geodesicRoutePress={(transportType) => {
+              setChallenge((prevState) => ({
+                ...prevState,
+                routeType: "straight",
+                transportType: transportType,
+              }));
+              setConfirmationModalActive(false);
             }}
           />
-        )}
-        {challenge.routeType == "straight" && (
-          <Polyline
-            coordinates={[
-              {
-                latitude: challenge.startLatitude,
-                longitude: challenge.startLongitude,
-              },
+          {challenge.routeType && (
+            <SaveModal
+              toastRef={toastRef}
+              challenge={challenge}
+              onCancelPress={resetChallengeValues}
+            />
+          )}
 
-              {
-                latitude: challenge.finishLatitude,
-                longitude: challenge.finishLongitude,
-              },
-            ]}
-            strokeWidth={4}
-            strokeColor="hotpink"
-            lineDashPattern={[10, 1]}
-          />
-        )}
+          <MapView
+            className="w-full h-full"
+            zoomEnabled={true}
+            region={{
+              latitude: position.latitude,
+              longitude: position.longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            }}
+            onRegionChange={(e) => {
+              challenge.setStart || setPinStart(e);
+              challenge.setFinish || setPinFinish(e);
+            }}
+          >
+            {challenge.routeType == "google" && (
+              <MapViewDirections
+                origin={{
+                  latitude: challenge.startLatitude,
+                  longitude: challenge.startLongitude,
+                }}
+                destination={{
+                  latitude: challenge.finishLatitude,
+                  longitude: challenge.finishLongitude,
+                }}
+                strokeWidth={3}
+                strokeColor="hotpink"
+                apikey={GOOGLE_MAPS_APIKEY}
+                tappable={true}
+                onPress={() => {
+                  console.log("Polyline pressed");
+                }}
+                onReady={(result) => {
+                  setChallenge((prevState) => ({
+                    ...prevState,
+                    distance: result.distance,
+                  }));
+                }}
+              />
+            )}
+            {challenge.routeType == "straight" && (
+              <Polyline
+                coordinates={[
+                  {
+                    latitude: challenge.startLatitude,
+                    longitude: challenge.startLongitude,
+                  },
 
-        {challenge.setStart && (
-          <ChallengeMarkerView
-            color="orange"
-            draggable={!challenge.startLatitude ? true : false}
-            pinPosition={pinStart}
-            setPinPosition={setPinStart}
-          />
-        )}
-        {challenge.setFinish && (
-          <ChallengeMarkerView
-            draggable={!challenge.finishLatitude ? true : false}
-            color="lightgreen"
-            pinPosition={pinFinish}
-            setPinPosition={setPinFinish}
-          />
-        )}
-      </MapView>
-    </View>
+                  {
+                    latitude: challenge.finishLatitude,
+                    longitude: challenge.finishLongitude,
+                  },
+                ]}
+                strokeWidth={4}
+                strokeColor="hotpink"
+                lineDashPattern={[10, 1]}
+              />
+            )}
+
+            {challenge.setStart && (
+              <ChallengeMarkerView
+                color="orange"
+                draggable={!challenge.startLatitude ? true : false}
+                pinPosition={pinStart}
+                setPinPosition={setPinStart}
+              />
+            )}
+            {challenge.setFinish && (
+              <ChallengeMarkerView
+                type="finish"
+                draggable={!challenge.finishLatitude ? true : false}
+                color="lightgreen"
+                pinPosition={pinFinish}
+                setPinPosition={setPinFinish}
+              />
+            )}
+          </MapView>
+        </View>
+      ) : (
+        <ChallengeStartedView challenge={route.params.challengeToBeStarted} />
+      )}
+    </GestureHandlerRootView>
   );
 };
 

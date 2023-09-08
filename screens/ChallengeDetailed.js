@@ -1,11 +1,12 @@
 import {View, Text, TouchableOpacity, Image} from "react-native";
-import React, {useEffect} from "react";
+import React from "react";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {LinearGradient} from "expo-linear-gradient";
 import {
   ArrowTrendingUpIcon,
   CalendarDaysIcon,
-  FireIcon,
+  MapIcon,
+  MapPinIcon,
   XMarkIcon,
 } from "react-native-heroicons/outline";
 import moment from "moment";
@@ -18,10 +19,8 @@ const ChallengeDetailed = () => {
   const route = useRoute();
   const {challenge, isCurrentUsers} = route.params;
   const navigation = useNavigation();
-  useEffect(() => {
-    console.log(challenge);
-  }, [challenge]);
   const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
+
   return (
     <View className="relative h-full w-screen items-center justify-center">
       <View className="absolute top-10 bottom-20 left-3 right-3 rounded-3xl">
@@ -44,17 +43,22 @@ const ChallengeDetailed = () => {
           </TouchableOpacity>
           <View>
             {isCurrentUsers ? (
-              <Text className="font-bold text-xl p-3" style={{color: "tomato"}}>
-                Twoje wyzwanie
-              </Text>
+              <View className="px-3 mt-5 mb-2 bg-black/50 py-2 flex-row justify-between">
+                <Text className="font-bold text-xl text-white">
+                  Twoje wyzwanie
+                </Text>
+              </View>
             ) : (
-              <View className="justify-center space-y-4 mt-3">
+              <View className="justify-center space-y-4 mt-5 mb-2 bg-black/50 py-2">
                 <View className="justify-center items-center">
-                  <Image
-                    className="w-20 h-20 rounded-full"
-                    source={{uri: challenge.creator.profileImgUrl}}
-                  />
-                  <Text className="text-xl font-bold" style={{color: "tomato"}}>
+                  <View className="w-20 h-20 rounded-full border border-white">
+                    <Image
+                      className="w-full h-full rounded-full"
+                      source={{uri: challenge.creator.profileImgUrl}}
+                    />
+                  </View>
+
+                  <Text className="text-xl font-bold text-white">
                     {challenge.creator.firstName +
                       " " +
                       challenge.creator.lastName}
@@ -62,21 +66,42 @@ const ChallengeDetailed = () => {
                 </View>
               </View>
             )}
-            <View className="justify-center space-y-4 mt-3">
-              <View className="flex-row space-x-1 px-3">
-                <CalendarDaysIcon size={30} color="black" />
-                <Text className="text-lg">
-                  {moment(challenge.date.toDate()).fromNow()}
-                </Text>
+            <View className="justify-center space-y-4">
+              <View className="space-y-4 px-3">
+                <View className="flex-row space-x-1">
+                  <CalendarDaysIcon size={30} color="black" />
+                  <Text className="text-lg">
+                    {moment(challenge.date.toDate()).fromNow()}
+                  </Text>
+                </View>
+                <View className="flex-row justify-between">
+                  <View className="flex-row space-x-2">
+                    <ArrowTrendingUpIcon size={30} color="black" />
+                    <Text className="text-lg">
+                      {challenge.distance < 1
+                        ? `${challenge.distance.toFixed(3) * 1000} m`
+                        : `${challenge.distance.toFixed(2)} km`}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center space-x-1">
+                    <MapPinIcon color="black" size={25} />
+                    <Text className="text-lg font-bold">
+                      {challenge.startAddress}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="flex-row items-center space-x-2">
+                  <MapIcon size={30} color="black" />
+                  <Text className="text-lg">
+                    Trasa{" "}
+                    {challenge.routeType == "google"
+                      ? "Google"
+                      : "niestandardowa"}
+                  </Text>
+                </View>
               </View>
-              <View className="flex-row space-x-2 px-3">
-                <ArrowTrendingUpIcon size={30} color="black" />
-                <Text className="text-lg">
-                  {challenge.distance < 1
-                    ? `${challenge.distance.toFixed(3) * 1000} m`
-                    : `${challenge.distance.toFixed(2)} km`}
-                </Text>
-              </View>
+
               <MapView
                 className="w-full h-64"
                 zoomEnabled={true}
@@ -143,7 +168,14 @@ const ChallengeDetailed = () => {
                   }}
                 />
               </MapView>
-              <TouchableOpacity className="bg-white mx-3 p-3 flex-row justify-center items-center rounded">
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Maps", {
+                    challengeToBeStarted: challenge,
+                  });
+                }}
+                className="bg-white mx-3 p-3 flex-row justify-center items-center rounded"
+              >
                 <Text className="font-bold text-lg">Rozpocznij wyzwanie</Text>
               </TouchableOpacity>
             </View>

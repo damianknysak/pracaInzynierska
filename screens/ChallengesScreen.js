@@ -1,5 +1,12 @@
-import {StyleSheet, Text, View, TouchableWithoutFeedback} from "react-native";
-import React, {useRef} from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
+import React, {useEffect, useRef} from "react";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Toast from "../components/Shared/CustomToast";
 import {useState} from "react";
@@ -10,6 +17,10 @@ import YourChallenges from "../components/Challenges/YourChallenges";
 import FriendsChallenges from "../components/Challenges/FriendsChallenges";
 const ChallengesScreen = () => {
   const toastRef = useRef();
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
 
   return (
     <GestureHandlerRootView className="flex-1">
@@ -22,8 +33,23 @@ const ChallengesScreen = () => {
         <SafeAreaView className="p-4">
           <Toast ref={toastRef} />
           <Header />
-          <YourChallenges />
-          <FriendsChallenges />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 100}}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            <YourChallenges
+              toastRef={toastRef}
+              refresh={refreshing}
+              setRefresh={setRefreshing}
+            />
+            <FriendsChallenges
+              refresh={refreshing}
+              setRefresh={setRefreshing}
+            />
+          </ScrollView>
         </SafeAreaView>
       </LinearGradient>
     </GestureHandlerRootView>

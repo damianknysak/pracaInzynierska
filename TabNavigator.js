@@ -34,7 +34,7 @@ const TabNavigator = () => {
             label = "Home";
           } else if (route.name == "Maps") {
             label = "Mapy";
-          } else if (route.name == "Settings") {
+          } else if (route.name == "Challenges") {
             label = "Wyzwania";
           } else if (route.name == "Profile") {
             label = "Profil";
@@ -50,7 +50,8 @@ const TabNavigator = () => {
           if (route.name == "Maps") {
             return <MapPinIcon size={22} color={color} />;
           }
-          if (route.name == "Settings") {
+          if (route.name == "Challenges") {
+            route.params = {refresh: false};
             return <FireIcon size={22} color={color} />;
           }
           if (route.name == "Profile") {
@@ -78,7 +79,7 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Settings"
+        name="Challenges"
         component={ChallengesScreen}
         options={{
           headerShown: false,

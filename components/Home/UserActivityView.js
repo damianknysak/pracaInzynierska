@@ -3,16 +3,17 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  Image,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import ImageView from "./ImageView";
 import ChallengeView from "./ChallengeView";
-import { Text } from "react-native";
-import { FaceFrownIcon } from "react-native-heroicons/outline";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {Text} from "react-native";
+import {FaceFrownIcon} from "react-native-heroicons/outline";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Toast from "../Shared/CustomToast";
 
-const UserActivityView = ({ activityList, fetchActivity, toastRef }) => {
+const UserActivityView = ({activityList, fetchActivity, toastRef}) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const onRefresh = () => {
     setRefreshing(true);
@@ -53,11 +54,12 @@ const UserActivityView = ({ activityList, fetchActivity, toastRef }) => {
         <ActivityIndicator className="mt-52" size={50} color="white" />
       )}
       {activityList && activityList.length === 0 && (
-        <View className="justify-center items-center">
-          <Text className="text-white text-xl">
-            Jeszcze nie miałeś żadnej aktywności
-          </Text>
-          <FaceFrownIcon size={40} color="orange" />
+        <View className="justify-center items-center mt-20 space-y-10">
+          <Text className="text-white text-2xl">Brak aktywności</Text>
+          <Image
+            className="w-40 h-40"
+            source={require("../../assets/myAssets/no-results.png")}
+          />
         </View>
       )}
     </ScrollView>

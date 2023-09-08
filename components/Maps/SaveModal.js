@@ -1,11 +1,33 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
-import { BookmarkIcon } from "react-native-heroicons/outline";
+import {View, Text, TouchableOpacity, ActivityIndicator} from "react-native";
+import React, {useState} from "react";
+import {BookmarkIcon} from "react-native-heroicons/outline";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { notifyFriends } from "../../utils/notifyUtils";
+import {notifyFriends} from "../../utils/notifyUtils";
+import {getAddressFromCoordinates} from "../../utils/mapsUtils";
 
-const SaveModal = ({ challenge, onCancelPress }) => {
+const SaveModal = ({challenge, onCancelPress, toastRef}) => {
+  const getAddressAsync = async (item) => {
+    try {
+      const start = await getAddressFromCoordinates({
+        latitude: item.startLatitude,
+        longitude: item.startLongitude,
+      });
+      const finish = await getAddressFromCoordinates({
+        latitude: item.finishLatitude,
+        longitude: item.finishLongitude,
+      });
+      const startDN = start?.display_name;
+      const finishDN = finish?.display_name;
+      return {
+        startAddress: startDN?.substring(0, startDN.indexOf(",")),
+        finishAddress: finishDN?.substring(0, finishDN.indexOf(",")),
+      };
+    } catch (e) {
+      console.log(`Failed to fetch address ${e}`);
+    }
+  };
+
   function distance(coords1, coords2) {
     const R = 6371e3; // metres
     const φ1 = (coords1.lat * Math.PI) / 180; // φ, λ in radians
@@ -28,12 +50,14 @@ const SaveModal = ({ challenge, onCancelPress }) => {
       let dist;
       if (challenge.routeType == "straight") {
         dist = distance(
-          { lat: challenge.startLatitude, lon: challenge.startLongitude },
-          { lat: challenge.finishLatitude, lon: challenge.finishLongitude }
+          {lat: challenge.startLatitude, lon: challenge.startLongitude},
+          {lat: challenge.finishLatitude, lon: challenge.finishLongitude}
         );
       } else {
         dist = challenge.distance;
       }
+      const {startAddress, finishAddress} = await getAddressAsync(challenge);
+
       const docRef = await firestore().collection("Challenges").add({
         creatorId: currentUserUid,
         startLongitude: challenge.startLongitude,
@@ -41,11 +65,25 @@ const SaveModal = ({ challenge, onCancelPress }) => {
         finishLongitude: challenge.finishLongitude,
         finishLatitude: challenge.finishLatitude,
         routeType: challenge.routeType,
+        startAddress: startAddress,
+        finishAddress: finishAddress,
+        transportType: challenge.transportType,
         date: firestore.FieldValue.serverTimestamp(),
         distance: dist,
       });
+
       notifyFriends("challengeAdd", docRef.id);
+      toastRef.current.show({
+        type: "success",
+        text: "Wyzwanie zostało stworzone!",
+        duration: 2000,
+      });
     } catch (e) {
+      toastRef.current.show({
+        type: "error",
+        text: "Błąd przy tworzeniu wyzwania!",
+        duration: 2000,
+      });
       console.log(e);
     }
     onCancelPress();

@@ -15,7 +15,6 @@ import useAuth from "../hooks/useAuth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import {useRef} from "react";
-import {LinearGradient} from "react-native-svg";
 import {PhotoIcon} from "react-native-heroicons/outline";
 import PhotoProps from "../components/Gallery/PhotoProps";
 import {GestureHandlerRootView} from "react-native-gesture-handler";

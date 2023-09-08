@@ -37,23 +37,9 @@ export async function getChallengesList() {
       .limit(10)
       .get();
 
-    // const challenges = colRef.docs
-    //   .map((doc) => {
-    //     let challengeObject = doc.data();
-    //     challengeObject.id = doc.id;
-    //     return challengeObject;
-    //   })
-    //   .reverse();
-
-    // return challenges;
     const challenges = await Promise.all(
       colRef.docs.map(async (doc) => {
         let challengeObject = doc.data();
-        const {startAddress, finishAddress} = await getAddressAsync(
-          challengeObject
-        );
-        challengeObject.startAddress = startAddress;
-        challengeObject.finishAddress = finishAddress;
         challengeObject.id = doc.id;
         return challengeObject;
       })
@@ -85,11 +71,6 @@ export async function getFriendsChallengesList() {
       challengesRef.docs.map(async (doc) => {
         let challengeObject = doc.data();
         let creator = await getInfoAboutUser(challengeObject.creatorId);
-        const {startAddress, finishAddress} = await getAddressAsync(
-          challengeObject
-        );
-        challengeObject.startAddress = startAddress;
-        challengeObject.finishAddress = finishAddress;
         challengeObject.id = doc.id;
         challengeObject.creator = creator;
         return challengeObject;
@@ -101,24 +82,3 @@ export async function getFriendsChallengesList() {
     console.log(`Error while getFriendsList ${e}`);
   }
 }
-
-const getAddressAsync = async (item) => {
-  try {
-    const start = await getAddressFromCoordinates({
-      latitude: item.startLatitude,
-      longitude: item.startLongitude,
-    });
-    const finish = await getAddressFromCoordinates({
-      latitude: item.finishLatitude,
-      longitude: item.finishLongitude,
-    });
-    const startDN = start?.display_name;
-    const finishDN = finish?.display_name;
-    return {
-      startAddress: startDN?.substring(0, startDN.indexOf(",")),
-      finishAddress: finishDN?.substring(0, finishDN.indexOf(",")),
-    };
-  } catch (e) {
-    console.log(`Failed to fetch address ${e}`);
-  }
-};
