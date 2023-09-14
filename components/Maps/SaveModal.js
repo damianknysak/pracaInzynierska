@@ -4,7 +4,7 @@ import {BookmarkIcon} from "react-native-heroicons/outline";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import {notifyFriends} from "../../utils/notifyUtils";
-import {getAddressFromCoordinates} from "../../utils/mapsUtils";
+import {distance, getAddressFromCoordinates} from "../../utils/mapsUtils";
 
 const SaveModal = ({challenge, onCancelPress, toastRef}) => {
   const getAddressAsync = async (item) => {
@@ -28,20 +28,6 @@ const SaveModal = ({challenge, onCancelPress, toastRef}) => {
     }
   };
 
-  function distance(coords1, coords2) {
-    const R = 6371e3; // metres
-    const φ1 = (coords1.lat * Math.PI) / 180; // φ, λ in radians
-    const φ2 = (coords2.lat * Math.PI) / 180;
-    const Δφ = ((coords2.lat - coords1.lat) * Math.PI) / 180;
-    const Δλ = ((coords2.lon - coords1.lon) * Math.PI) / 180;
-
-    const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return (R * c) / 1000; // in metres
-  }
   const [saving, setSaving] = useState(false);
   const saveChallenge = async () => {
     setSaving(true);

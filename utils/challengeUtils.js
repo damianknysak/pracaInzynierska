@@ -82,3 +82,61 @@ export async function getFriendsChallengesList() {
     console.log(`Error while getFriendsList ${e}`);
   }
 }
+
+export const getChallengesLeaderboard = async (challengeId) => {
+  try {
+    const leaderboardRef = firestore()
+      .collection("Challenges")
+      .doc(challengeId)
+      .collection("Leaderboard")
+      .orderBy("time")
+      .limit(10);
+    const leaderboardSnapshot = await leaderboardRef.get();
+
+    if (leaderboardSnapshot.empty) {
+      console.log("Kolekcja Leaderboard jest pusta.");
+      return null; // Zwracamy pustą tablicę lub odpowiednią wartość w przypadku braku danych.
+    } else {
+      // Kolekcja Leaderboard istnieje, pobierz zawartość i zwróć ją.
+      const leaderboardData = [];
+      leaderboardSnapshot.forEach((doc) => {
+        leaderboardData.push(doc.data());
+      });
+      console.log(leaderboardData);
+      return leaderboardData;
+    }
+  } catch (e) {
+    console.log(`Wystąpił błąd podczas pobierania danych z Leaderboard: ${e}`);
+    throw e;
+  }
+};
+
+export const addResultToChallengeLeaderboard = async (
+  challengeId,
+  time,
+  toastRef
+) => {
+  try {
+    const leaderboardRef = firestore()
+      .collection("Challenges")
+      .doc(challengeId)
+      .collection("Leaderboard");
+
+    const userId = auth().currentUser.uid;
+
+    const leaderboardData = {
+      userId: userId,
+      time: time,
+    };
+    await leaderboardRef.add(leaderboardData);
+    toastRef.current.show({
+      type: "success",
+      text: "Wynik został dodany!",
+      duration: 2000,
+    });
+    console.log("Dane zostały dodane do kolekcji Leaderboard.");
+  } catch (e) {
+    console.log(`Wystąpił błąd podczas dodawania danych do Leaderboard: ${e}`);
+    throw e;
+  }
+};

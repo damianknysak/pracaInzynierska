@@ -11,8 +11,6 @@ import {useEffect} from "react";
 import auth from "@react-native-firebase/auth";
 import {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
-import {getFriendsList} from "../../utils/firebaseUtils";
-import {getChallengesList} from "../../utils/challengeUtils";
 
 const ProfileStats = () => {
   const [challengesCount, setChallengesCount] = useState(0);
