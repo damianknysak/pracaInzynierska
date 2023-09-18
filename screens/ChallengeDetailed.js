@@ -13,6 +13,7 @@ import ChallengeFinishedInfo from "../components/Maps/ChallengeFinishedInfo";
 import ChallengeStopwatch from "../components/Maps/ChallengeStopwatch";
 import Toast from "../components/Shared/CustomToast";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {schedulePushNotification} from "../utils/localNotification";
 
 const ChallengeDetailed = () => {
   const METERS_TO_MAKE_CHALLENGE_READY = 50;
@@ -37,6 +38,7 @@ const ChallengeDetailed = () => {
     challengeFinished && setChallengeFinished(false);
     challengeStarted && setChallengeStarted(false);
   };
+  const [isNotificationScheduled, setIsNotificationScheduled] = useState(false);
 
   const getUsersPosition = () => {
     Geolocation.getCurrentPosition(
@@ -78,6 +80,9 @@ const ChallengeDetailed = () => {
       // do usunięcia
       setTimeout(() => {
         challengeStarted && setChallengeFinished(true);
+        isNotificationScheduled || schedulePushNotification();
+        setIsNotificationScheduled(true);
+        //do usunięcia
       }, 5000);
 
       const dist = calculateDistanceToStart();
@@ -91,6 +96,8 @@ const ChallengeDetailed = () => {
       const distFinish = calculateDistanceToFinish();
       if (distFinish.toFixed(3) * 1000 < METERS_TO_MAKE_CHALLENGE_READY) {
         challengeStarted && setChallengeFinished(true);
+        // isNotificationScheduled || schedulePushNotification();
+        // setIsNotificationScheduled(true);
       }
       distFinish < 1
         ? setDistanceToFinish(`${distFinish.toFixed(3) * 1000} metrów`)

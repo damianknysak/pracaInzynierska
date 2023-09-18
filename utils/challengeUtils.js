@@ -129,14 +129,22 @@ export const addResultToChallengeLeaderboard = async (
       time: time,
     };
     await leaderboardRef.add(leaderboardData);
+
     toastRef.current.show({
       type: "success",
       text: "Wynik został dodany!",
       duration: 2000,
     });
+
     console.log("Dane zostały dodane do kolekcji Leaderboard.");
+    return true;
   } catch (e) {
     console.log(`Wystąpił błąd podczas dodawania danych do Leaderboard: ${e}`);
-    throw e;
+    toastRef.current.show({
+      type: "error",
+      text: "Błąd podczas dodawania wyniku!",
+      duration: 2000,
+    });
+    return false;
   }
 };

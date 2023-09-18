@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity} from "react-native";
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   CakeIcon,
   ShareIcon,
@@ -16,8 +16,26 @@ import Toast from "../Shared/CustomToast";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
+  const [isPublished, setIsPublished] = useState(false);
   const getChallengesLeaderboardAsync = async () => {
     await getChallengesLeaderboard(challenge.id);
+  };
+
+  const handleSubmit = async () => {
+    setIsPublished(true);
+    if (
+      await addResultToChallengeLeaderboard(
+        challenge.id,
+        timeObjectToSeconds(time),
+        toastRef
+      )
+    ) {
+      setTimeout(() => {
+        resetChallenge();
+      }, 2000);
+    } else {
+      setIsPublished(false);
+    }
   };
   useEffect(() => {
     getChallengesLeaderboardAsync();
@@ -44,13 +62,8 @@ const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
           <TrashIcon color="red" size={40} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            addResultToChallengeLeaderboard(
-              challenge.id,
-              timeObjectToSeconds(time),
-              toastRef
-            );
-          }}
+          disabled={isPublished}
+          onPress={handleSubmit}
           className="flex-row items-center space-x-2 p-3 bg-black rounded-xl"
         >
           <Text className="text-white text-lg font-bold tracking-wider">

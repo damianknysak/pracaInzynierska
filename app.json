@@ -4,6 +4,7 @@
     "slug": "pracaInzynierskaDamianKnysak",
     "plugins": [
       "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app",
       [
         "expo-media-library",
         {
