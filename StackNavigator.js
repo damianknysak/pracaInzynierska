@@ -14,6 +14,7 @@ import {HomeActivityProvider} from "./hooks/useHomeActivity";
 import CustomDialogScreen from "./screens/CustomDialogScreen";
 import ProfileListsScreen from "./screens/ProfileListsScreen";
 import ChallengeDetailed from "./screens/ChallengeDetailed";
+import BackgroundGPStest from "./screens/BackgroundGPStest";
 
 const Stack = createNativeStackNavigator();
 
@@ -77,6 +78,15 @@ const StackNavigator = () => {
               <Stack.Screen
                 name="Camera"
                 component={CameraScreen}
+                options={{
+                  headerShown: false,
+                  navigationBarColor: "transparent",
+                  navigationBarHidden: true,
+                }}
+              />
+              <Stack.Screen
+                name="Test"
+                component={BackgroundGPStest}
                 options={{
                   headerShown: false,
                   navigationBarColor: "transparent",

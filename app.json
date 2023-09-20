@@ -6,6 +6,12 @@
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
       [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
         "expo-media-library",
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",

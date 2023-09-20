@@ -7,7 +7,7 @@ import {
   UserCircleIcon,
 } from "react-native-heroicons/outline";
 
-const ChallengeFishedStatsGrid = ({time}) => {
+const ChallengeFishedStatsGrid = ({time, leaderboardPosition}) => {
   return (
     <View className="w-full">
       <View className="flex-row mx-2 justify-around mt-2 space-x-2">
@@ -23,7 +23,9 @@ const ChallengeFishedStatsGrid = ({time}) => {
         <TouchableOpacity className="bg-black/50 flex-1 py-10 flex-row items-center rounded-xl justify-center space-x-2">
           <TrophyIcon size={25} color="gold" />
           <Text className="text-white">Miejsce w tabeli:</Text>
-          <Text className="text-white font-bold text-lg">8</Text>
+          <Text className="text-white font-bold text-lg">
+            {leaderboardPosition && leaderboardPosition}
+          </Text>
         </TouchableOpacity>
       </View>
       <View className="flex-row justify-around mx-2 mt-2 space-x-2">

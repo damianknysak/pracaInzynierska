@@ -4,8 +4,6 @@ import {useRoute} from "@react-navigation/native";
 import {LinearGradient} from "expo-linear-gradient";
 import ChallengeStartedView from "../components/Maps/ChallengeStartedView";
 import ChallengeDetailedDesc from "../components/Maps/ChallengeDetailedDesc";
-import Geolocation from "@react-native-community/geolocation";
-import {distance} from "../utils/mapsUtils";
 import ChallengeDetailedBottomBtn from "../components/Maps/ChallengeDetailedBottomBtn";
 import ChallengeUserDistanceInfo from "../components/Maps/ChallengeUserDistanceInfo";
 import ChallengeDetailedHeader from "../components/Maps/ChallengeDetailedHeader";
@@ -13,102 +11,99 @@ import ChallengeFinishedInfo from "../components/Maps/ChallengeFinishedInfo";
 import ChallengeStopwatch from "../components/Maps/ChallengeStopwatch";
 import Toast from "../components/Shared/CustomToast";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {schedulePushNotification} from "../utils/localNotification";
-
+import useChallengeLocation from "../hooks/useChallengeLocation";
 const ChallengeDetailed = () => {
-  const METERS_TO_MAKE_CHALLENGE_READY = 50;
-  const route = useRoute();
-  const {challenge, isCurrentUsers} = route.params;
-  const [usersPosition, setUsersPosition] = useState();
-  const [distanceToStart, setDistanceToStart] = useState();
-  const [distanceToFinish, setDistanceToFinish] = useState();
-  const [isChallengeReadyToStart, setIsChallengeReadyToStart] = useState(false);
-  const [challengeStarted, setChallengeStarted] = useState(false);
-  const [challengeFinished, setChallengeFinished] = useState(false);
+  // setting start date if challenge has started
+  const [startChallengeDate, setStartChallengeDate] = useState();
+
   const [time, setTime] = useState({
     sec: 0,
     min: 0,
     hr: 0,
   });
   const [intervalId, setIntervalId] = useState();
+  const METERS_TO_MAKE_CHALLENGE_READY = 70;
+  const route = useRoute();
+  const {challenge, isCurrentUsers} = route.params;
+  const {
+    usersPosition,
+    setUsersPosition,
+    startBackgroundUpdate,
+    stopBackgroundUpdate,
+    distanceToStart,
+    distanceToFinish,
+    challengeStarted,
+    setChallengeStarted,
+    challengeFinished,
+    setChallengeFinished,
+    finishChallengeDate,
+    setFinishChallengeDate,
+  } = useChallengeLocation(challenge, METERS_TO_MAKE_CHALLENGE_READY);
+  const [isChallengeReadyToStart, setIsChallengeReadyToStart] = useState(false);
   const toastRef = useRef();
+
   const resetChallenge = () => {
     intervalId && clearInterval(intervalId);
+    intervalId && setIntervalId(null);
     setTime({sec: 0, min: 0, hr: 0});
     challengeFinished && setChallengeFinished(false);
     challengeStarted && setChallengeStarted(false);
+    setStartChallengeDate(null);
+    setFinishChallengeDate(null);
   };
-  const [isNotificationScheduled, setIsNotificationScheduled] = useState(false);
+  const [distanceToStartString, setDistanceToStartString] = useState("");
+  const [distanceToFinishString, setDistanceToFinishString] = useState("");
 
-  const getUsersPosition = () => {
-    Geolocation.getCurrentPosition(
-      (pos) => {
-        const crd = pos.coords;
-        setUsersPosition({
-          latitude: crd.latitude,
-          longitude: crd.longitude,
-        });
-      },
-      (error) => console.error(error),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
-  };
-
-  const calculateDistanceToStart = () => {
-    const dist = distance(
-      {lat: usersPosition.latitude, lon: usersPosition.longitude},
-      {lat: challenge.startLatitude, lon: challenge.startLongitude}
-    );
-    return dist;
-  };
-
-  const calculateDistanceToFinish = () => {
-    const dist = distance(
-      {lat: usersPosition.latitude, lon: usersPosition.longitude},
-      {lat: challenge.finishLatitude, lon: challenge.finishLongitude}
-    );
-    return dist;
-  };
+  //if challenge is finished stop tracking users position
   useEffect(() => {
-    getUsersPosition();
-  }, []);
+    if (challengeFinished) {
+      stopBackgroundUpdate();
+      clearInterval(intervalId);
+    } else {
+      startBackgroundUpdate();
+    }
+  }, [challengeFinished]);
 
   useEffect(() => {
-    if (usersPosition) {
-      //do usunięcia
-      setIsChallengeReadyToStart(true);
-      // do usunięcia
-      setTimeout(() => {
-        challengeStarted && setChallengeFinished(true);
-        isNotificationScheduled || schedulePushNotification();
-        setIsNotificationScheduled(true);
-        //do usunięcia
-      }, 5000);
-
-      const dist = calculateDistanceToStart();
-      if (dist.toFixed(3) * 1000 < METERS_TO_MAKE_CHALLENGE_READY) {
+    if (usersPosition && distanceToStart && distanceToFinish) {
+      if (distanceToStart.toFixed(3) * 1000 < METERS_TO_MAKE_CHALLENGE_READY) {
         setIsChallengeReadyToStart(true);
+      } else {
+        //do testów zakomentuj
+        setIsChallengeReadyToStart(false);
       }
-      dist < 1
-        ? setDistanceToStart(`${dist.toFixed(3) * 1000} metrów`)
-        : setDistanceToStart(`${dist.toFixed(2)} km`);
+      distanceToStart < 1
+        ? setDistanceToStartString(
+            `${distanceToStart.toFixed(3) * 1000} metrów`
+          )
+        : setDistanceToStartString(`${distanceToStart.toFixed(2)} km`);
 
-      const distFinish = calculateDistanceToFinish();
-      if (distFinish.toFixed(3) * 1000 < METERS_TO_MAKE_CHALLENGE_READY) {
-        challengeStarted && setChallengeFinished(true);
-        // isNotificationScheduled || schedulePushNotification();
-        // setIsNotificationScheduled(true);
-      }
-      distFinish < 1
-        ? setDistanceToFinish(`${distFinish.toFixed(3) * 1000} metrów`)
-        : setDistanceToFinish(`${distFinish.toFixed(2)} km`);
+      distanceToFinish < 1
+        ? setDistanceToFinishString(
+            `${distanceToFinish.toFixed(3) * 1000} metrów`
+          )
+        : setDistanceToFinishString(`${distanceToFinish.toFixed(2)} km`);
     }
   }, [usersPosition]);
 
   useEffect(() => {
-    if (challengeFinished) {
-      clearInterval(intervalId);
+    return () => {
+      // on component unmount
+      stopBackgroundUpdate();
+      intervalId && clearInterval(intervalId);
+      intervalId && setIntervalId(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(`challengeStarted: ${challengeStarted}`);
+    if (challengeStarted) {
+      setStartChallengeDate(Date.now());
     }
+  }, [challengeStarted]);
+
+  useEffect(() => {
+    console.log(`challengeFinished ${challengeFinished}`);
   }, [challengeFinished]);
 
   return (
@@ -133,8 +128,6 @@ const ChallengeDetailed = () => {
               )}
               {challengeStarted && !challengeFinished && (
                 <ChallengeStopwatch
-                  challengeFinished={challengeFinished}
-                  challengeStarted={challengeStarted}
                   time={time}
                   setTime={setTime}
                   intervalId={intervalId}
@@ -155,8 +148,8 @@ const ChallengeDetailed = () => {
                   <ChallengeUserDistanceInfo
                     challengeStarted={challengeStarted}
                     isChallengeReadyToStart={isChallengeReadyToStart}
-                    distanceToFinish={distanceToFinish}
-                    distanceToStart={distanceToStart}
+                    distanceToFinish={distanceToFinishString}
+                    distanceToStart={distanceToStartString}
                   />
 
                   {/* Challenge start/stop btns */}
@@ -165,11 +158,14 @@ const ChallengeDetailed = () => {
                     challengeStarted={challengeStarted}
                     setChallengeStarted={setChallengeStarted}
                     isChallengeReadyToStart={isChallengeReadyToStart}
+                    resetChallenge={resetChallenge}
                   />
                 </>
               )}
               {challengeFinished && (
                 <ChallengeFinishedInfo
+                  startChallengeDate={startChallengeDate}
+                  finishChallengeDate={finishChallengeDate}
                   resetChallenge={resetChallenge}
                   time={time}
                   challenge={challenge}

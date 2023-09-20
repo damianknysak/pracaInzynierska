@@ -83,6 +83,53 @@ export async function getFriendsChallengesList() {
   }
 }
 
+export const getUserPositionInLeaderboard = async (challengeId, time) => {
+  try {
+    const leaderboardRef = firestore()
+      .collection("Challenges")
+      .doc(challengeId)
+      .collection("Leaderboard")
+      .orderBy("time");
+
+    const leaderboardSnapshot = await leaderboardRef.get();
+
+    if (leaderboardSnapshot.empty) {
+      console.log("Kolekcja Leaderboard jest pusta czyli nr 1.");
+      return 1; // Jeśli pusta to pozycja pierwsza.
+    } else {
+      // Kolekcja Leaderboard istnieje, przekształć ją na tablicę.
+      const leaderboardData = [];
+      leaderboardSnapshot.forEach((doc) => {
+        leaderboardData.push(doc.data());
+      });
+
+      // Sortuj tablicę względem czasu rosnąco.
+      leaderboardData.sort((a, b) => a.time - b.time);
+      console.log(leaderboardData);
+      // Znajdź pozycję użytkownika w rankingu na podstawie czasu.
+      let position = 1; // Domyślna wartość, jeśli użytkownik nie zostanie znaleziony.
+      for (let i = 0; i < leaderboardData.length; i++) {
+        console.log(
+          `leaderboardData[i].time ${leaderboardData[i].time} <= time ${time} ${
+            leaderboardData[i].time <= time
+          }`
+        );
+        if (leaderboardData[i].time <= time) {
+          position++; // Pozycja użytkownika w rankingu (indeks + 1).
+        } else {
+          break;
+        }
+      }
+
+      console.log(`Pozycja użytkownika dla czasu ${time} sekund: ${position}`);
+      return position;
+    }
+  } catch (e) {
+    console.log(`Wystąpił błąd podczas pobierania danych z Leaderboard: ${e}`);
+    throw e;
+  }
+};
+
 export const getChallengesLeaderboard = async (challengeId) => {
   try {
     const leaderboardRef = firestore()

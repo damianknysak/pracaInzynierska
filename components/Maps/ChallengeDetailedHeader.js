@@ -2,6 +2,7 @@ import {View, Text, TouchableOpacity} from "react-native";
 import React from "react";
 import {FireIcon, XMarkIcon} from "react-native-heroicons/outline";
 import {useNavigation} from "@react-navigation/native";
+import useChallengeLocation from "../../hooks/useChallengeLocation";
 
 const ChallengeDetailedHeader = () => {
   const navigation = useNavigation();

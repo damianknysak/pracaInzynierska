@@ -1,8 +1,10 @@
 import {View, Text, TouchableOpacity} from "react-native";
 import React, {useEffect, useState} from "react";
 import {ClockIcon} from "react-native-heroicons/outline";
+import {secondsToTimeObject, timeObjectToSeconds} from "../../utils/timeUtils";
 
 const ChallengeStopwatch = ({time, setTime, intervalId, setIntervalId}) => {
+  const [startChallenge, setStartChallenge] = useState(Date.now());
   const start = () => {
     if (!intervalId) {
       let id = setInterval(updateTimer, 1000);
@@ -10,6 +12,8 @@ const ChallengeStopwatch = ({time, setTime, intervalId, setIntervalId}) => {
     }
   };
   const updateTimer = () => {
+    console.log("updateTimer called");
+    setStartChallenge(Math.floor((Date.now() - startChallenge) / 1000));
     setTime((prev) => {
       let newTime = {...prev};
       // update sec and see if we need to increase min
@@ -27,33 +31,19 @@ const ChallengeStopwatch = ({time, setTime, intervalId, setIntervalId}) => {
       return newTime;
     });
   };
-  const pause = () => {
-    clearInterval(intervalId);
-    setIntervalId("");
-  };
-
-  const pauseOrResume = () => {
-    if (!intervalId) {
-      let id = setInterval(updateTimer, 1000);
-      setIntervalId(id);
-    } else {
-      clearInterval(intervalId);
-      setIntervalId("");
-    }
-  };
-
-  const reset = () => {
-    clearInterval(intervalId);
-    setTime({
-      sec: 0,
-      min: 0,
-      hr: 0,
-    });
-  };
 
   useEffect(() => {
     start();
   }, []);
+  // to make minimized counting work without counting in background
+  useEffect(() => {
+    if (
+      startChallenge != timeObjectToSeconds(time) &&
+      startChallenge < 1695225439
+    ) {
+      setTime(secondsToTimeObject(startChallenge));
+    }
+  }, [startChallenge]);
 
   return (
     <TouchableOpacity className="absolute bottom-36 py-2 px-2 items-center w-full z-10 flex-row bg-black/75 space-x-2">

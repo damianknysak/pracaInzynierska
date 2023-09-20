@@ -10,15 +10,32 @@ import ChallengeFishedStatsGrid from "./ChallengeFishedStatsGrid";
 import {
   addResultToChallengeLeaderboard,
   getChallengesLeaderboard,
+  getUserPositionInLeaderboard,
 } from "../../utils/challengeUtils";
-import {timeObjectToSeconds} from "../../utils/timeUtils";
+import {secondsToTimeObject, timeObjectToSeconds} from "../../utils/timeUtils";
 import Toast from "../Shared/CustomToast";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 
-const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
+const ChallengeFinishedInfo = ({
+  startChallengeDate,
+  finishChallengeDate,
+  challenge,
+  time,
+  resetChallenge,
+  toastRef,
+}) => {
   const [isPublished, setIsPublished] = useState(false);
+  const [leaderboardPosition, setLeaderboardPosition] = useState(null);
+  const [finishedTime, setFinishedTime] = useState();
+
   const getChallengesLeaderboardAsync = async () => {
-    await getChallengesLeaderboard(challenge.id);
+    // await getChallengesLeaderboard(challenge.id);
+    setLeaderboardPosition(
+      await getUserPositionInLeaderboard(
+        challenge.id,
+        timeObjectToSeconds(finishedTime)
+      )
+    );
   };
 
   const handleSubmit = async () => {
@@ -26,7 +43,7 @@ const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
     if (
       await addResultToChallengeLeaderboard(
         challenge.id,
-        timeObjectToSeconds(time),
+        timeObjectToSeconds(finishedTime),
         toastRef
       )
     ) {
@@ -37,9 +54,26 @@ const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
       setIsPublished(false);
     }
   };
+
   useEffect(() => {
-    getChallengesLeaderboardAsync();
-  }, []);
+    if (finishChallengeDate && !finishedTime) {
+      setFinishedTime(
+        secondsToTimeObject(
+          Math.floor((finishChallengeDate - startChallengeDate) / 1000)
+        )
+      );
+    }
+  }, [finishChallengeDate]);
+  useEffect(() => {
+    if (finishedTime) {
+      // console.log(`startChallengeDate: ${JSON.stringify(startChallengeDate)}`);
+      // console.log(
+      //   `finishChallengeDate: ${JSON.stringify(finishChallengeDate)}`
+      // );
+      console.log(`finishedTime: ${JSON.stringify(finishedTime)}`);
+      getChallengesLeaderboardAsync();
+    }
+  }, [finishedTime]);
 
   return (
     <View className="absolute mt-20 items-center z-10 overflow-hidden w-full h-full bg-black/75 rounded-t-3xl space-y-5">
@@ -50,8 +84,12 @@ const ChallengeFinishedInfo = ({challenge, time, resetChallenge, toastRef}) => {
           Ukończyłeś wyzwanie!
         </Text>
       </View>
-
-      <ChallengeFishedStatsGrid time={time} />
+      {finishedTime && (
+        <ChallengeFishedStatsGrid
+          time={finishedTime}
+          leaderboardPosition={leaderboardPosition}
+        />
+      )}
 
       <View className="absolute bottom-28 space-y-5">
         <TouchableOpacity

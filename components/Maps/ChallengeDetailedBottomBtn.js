@@ -8,11 +8,13 @@ const ChallengeDetailedBottomBtn = ({
   challengeStarted,
   setChallengeStarted,
   isChallengeReadyToStart,
+  resetChallenge,
 }) => {
   const navigation = useNavigation();
 
   const handleDelete = () => {
-    setChallengeStarted(false);
+    // setChallengeStarted(false);
+    resetChallenge();
   };
 
   return (

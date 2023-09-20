@@ -129,6 +129,15 @@ const HomeScreen = () => {
                   <>
                     <MainMenu />
                     <PopularPlaces />
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("Test");
+                      }}
+                    >
+                      <Text className="text-xl text-red-500">
+                        Go to Test Screen
+                      </Text>
+                    </TouchableOpacity>
                   </>
                 )}
               </ScrollView>
