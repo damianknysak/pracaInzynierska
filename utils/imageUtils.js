@@ -1,8 +1,9 @@
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
-import { notifyFriends } from "./notifyUtils";
+import {notifyFriends} from "./notifyUtils";
 import * as MediaLibrary from "expo-media-library";
+import {getFriendsList, getInfoAboutUser} from "./firebaseUtils";
 
 export const deleteImage = async (imageUrl, toastRef) => {
   try {
@@ -155,5 +156,67 @@ export const onSaveCloudPress = async (
       console.error(e);
     }
     setUploading(false);
+  }
+};
+
+export const getNearbyActivityList = async () => {
+  try {
+    const friendsList = await getFriendsList();
+    const nearbyActivityList = [];
+
+    //get nearbyImages
+    for (let i = 0; i < friendsList.length; i++) {
+      const querySnapshotImages = await firestore()
+        .collection("Users")
+        .doc(friendsList[i].id)
+        .collection("Images")
+        .where("isPublic", "==", true)
+        .get();
+
+      if (!querySnapshotImages.empty) {
+        const images = querySnapshotImages.docs.map((doc) => doc.data());
+        const activityCreatorInfo = await getInfoAboutUser(friendsList[i].id);
+        images.forEach((image) => {
+          nearbyActivityList.push({
+            activityCreator: friendsList[i].id,
+            activityCreatorProfileImgUrl: activityCreatorInfo.profileImgUrl,
+            activityType: "image",
+            image: image,
+          });
+        });
+      }
+    }
+
+    //get nearbyChallenges
+    for (let i = 0; i < friendsList.length; i++) {
+      const querySnapshotChallenges = await firestore()
+        .collection("Challenges")
+        .where(
+          "creatorId",
+          "in",
+          [friendsList[i].id] // Użyj tablicy zawierającej tylko jednego id
+        )
+        .get();
+
+      const challengesList = querySnapshotChallenges.docs.map((doc) => {
+        let challengeObject = doc.data();
+        challengeObject.id = doc.id;
+        return challengeObject;
+      });
+
+      for (const challenge of challengesList) {
+        const activityCreatorInfo = await getInfoAboutUser(challenge.creatorId);
+        nearbyActivityList.push({
+          activityCreator: challenge.creatorId,
+          activityCreatorProfileImgUrl: activityCreatorInfo.profileImgUrl,
+          activityType: "challenge",
+          challenge: challenge,
+        });
+      }
+    }
+
+    return nearbyActivityList;
+  } catch (e) {
+    console.error(`error getNearbyActivityList ${e}`);
   }
 };

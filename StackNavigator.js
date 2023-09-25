@@ -14,7 +14,7 @@ import {HomeActivityProvider} from "./hooks/useHomeActivity";
 import CustomDialogScreen from "./screens/CustomDialogScreen";
 import ProfileListsScreen from "./screens/ProfileListsScreen";
 import ChallengeDetailed from "./screens/ChallengeDetailed";
-import BackgroundGPStest from "./screens/BackgroundGPStest";
+import ChallengeLeaderboard from "./screens/ChallengeLeaderboard";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,7 +50,14 @@ const StackNavigator = () => {
                   headerShown: false,
                 }}
               />
-
+              <Stack.Screen
+                name="ChallengeLeaderboard"
+                component={ChallengeLeaderboard}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
               <Stack.Screen
                 name="Notification"
                 component={NotificationScreen}
@@ -84,15 +91,7 @@ const StackNavigator = () => {
                   navigationBarHidden: true,
                 }}
               />
-              <Stack.Screen
-                name="Test"
-                component={BackgroundGPStest}
-                options={{
-                  headerShown: false,
-                  navigationBarColor: "transparent",
-                  navigationBarHidden: true,
-                }}
-              />
+
               <Stack.Screen
                 name="Gallery"
                 component={GalleryScreen}

@@ -7,7 +7,11 @@ import {
 } from "react-native";
 import React from "react";
 import {useNavigation} from "@react-navigation/native";
-import {ArrowTrendingUpIcon, FireIcon} from "react-native-heroicons/outline";
+import {
+  ArrowTrendingUpIcon,
+  FireIcon,
+  TrophyIcon,
+} from "react-native-heroicons/outline";
 import moment from "moment";
 import "moment/locale/pl";
 
@@ -91,6 +95,17 @@ const FriendsChallengeCard = ({challenge}) => {
         <Text className="text-white font-bold text-center">
           Zobacz szczegóły
         </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ChallengeLeaderboard", {
+            challengeId: challenge.id,
+          });
+        }}
+        className="border-2 border-orange-400 bg-white px-3 py-1 rounded-xl flex-row items-center justify-center space-x-1"
+      >
+        <Text className="text-orange-400 font-bold text-center">Top 10</Text>
+        <TrophyIcon size={25} color="gold" />
       </TouchableOpacity>
     </View>
   );

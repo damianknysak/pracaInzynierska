@@ -103,107 +103,109 @@ const CameraScreen = () => {
       }
     }
   }
-  //image,locationStatus,positionGeocode,address,isPublic, setUploading
 
-  if (hasCameraPermission === false) {
-    return (
-      <View className="h-full w-screen justify-center align-center">
-        <Text>No access to camera</Text>
-      </View>
-    );
-  }
   const toastRef = useRef();
   return (
     <GestureHandlerRootView>
-      <Toast ref={toastRef} />
-      <View className="h-full w-screen relative">
-        {!image ? (
-          <View
-            className={`w-full aspect-${
-              ratio === "20:9" ? "[9/20]" : "[9/16]"
-            }`}
-          >
-            <Camera
-              className="w-full h-full"
-              type={type}
-              flashMode={flash}
-              ref={cameraRef}
-              ratio={ratio}
-            >
-              <SwitchCameraButton
-                onPressFunc={() => {
-                  setType(
-                    type == CameraType.back ? CameraType.front : CameraType.back
-                  );
-                }}
-              />
-              <FlashButton
-                curFlashState={flash}
-                onPressFunc={() => {
-                  setFlash(
-                    flash === Camera.Constants.FlashMode.off
-                      ? Camera.Constants.FlashMode.on
-                      : Camera.Constants.FlashMode.off
-                  );
-                }}
-              />
-              <TakePictureButton takePicture={takePicture} />
-              <GalleryButton />
-            </Camera>
-          </View>
-        ) : (
-          <>
-            <GoBackButton
-              onPressFunc={() => {
-                setImage(null);
-                setDownloading(false);
-                setUploading(false);
-              }}
-            />
-            <View
-              className={`w-full aspect-${
-                ratio === "20:9" ? "[9/20]" : "[9/16]"
-              }`}
-            >
-              <Image className="w-full h-full" source={{uri: image}} />
-            </View>
-            <BottomInfo
-              address={address}
-              isPublic={isPublic}
-              locationStatus={locationStatus}
-            />
+      {hasCameraPermission === false ? (
+        <View className="h-full w-screen justify-center items-center">
+          <Text>No access to camera</Text>
+        </View>
+      ) : (
+        <>
+          <Toast ref={toastRef} />
+          <View className="h-full w-screen relative">
+            {!image ? (
+              <View
+                className={`w-full aspect-${
+                  ratio === "20:9" ? "[9/20]" : "[9/16]"
+                }`}
+              >
+                <Camera
+                  className="w-full h-full"
+                  type={type}
+                  flashMode={flash}
+                  ref={cameraRef}
+                  ratio={ratio}
+                >
+                  <SwitchCameraButton
+                    onPressFunc={() => {
+                      setType(
+                        type == CameraType.back
+                          ? CameraType.front
+                          : CameraType.back
+                      );
+                    }}
+                  />
+                  <FlashButton
+                    curFlashState={flash}
+                    onPressFunc={() => {
+                      setFlash(
+                        flash === Camera.Constants.FlashMode.off
+                          ? Camera.Constants.FlashMode.on
+                          : Camera.Constants.FlashMode.off
+                      );
+                    }}
+                  />
+                  <TakePictureButton takePicture={takePicture} />
+                  <GalleryButton />
+                </Camera>
+              </View>
+            ) : (
+              <>
+                <GoBackButton
+                  onPressFunc={() => {
+                    setImage(null);
+                    setDownloading(false);
+                    setUploading(false);
+                  }}
+                />
+                <View
+                  className={`w-full aspect-${
+                    ratio === "20:9" ? "[9/20]" : "[9/16]"
+                  }`}
+                >
+                  <Image className="w-full h-full" source={{uri: image}} />
+                </View>
+                <BottomInfo
+                  address={address}
+                  isPublic={isPublic}
+                  locationStatus={locationStatus}
+                />
 
-            <PropertySwitches
-              isPublic={isPublic}
-              locationStatus={locationStatus}
-              onEyePress={() => {
-                setIsPublic(!isPublic);
-              }}
-              onLocationPress={() => {
-                setLocationStatus(!locationStatus);
-              }}
-            />
-            <BottomPanel
-              downloading={downloading}
-              uploading={uploading}
-              onSavePress={() => {
-                onSavePress(image, setDownloading, toastRef);
-              }}
-              onSaveCloudPress={() => {
-                onSaveCloudPress(
-                  image,
-                  locationStatus,
-                  positionGeocode,
-                  address,
-                  isPublic,
-                  setUploading,
-                  toastRef
-                );
-              }}
-            />
-          </>
-        )}
-      </View>
+                <PropertySwitches
+                  isPublic={isPublic}
+                  locationStatus={locationStatus}
+                  onEyePress={() => {
+                    setIsPublic(!isPublic);
+                  }}
+                  onLocationPress={() => {
+                    setLocationStatus(!locationStatus);
+                  }}
+                />
+                <BottomPanel
+                  downloading={downloading}
+                  uploading={uploading}
+                  onSavePress={() => {
+                    onSavePress(image, setDownloading, toastRef);
+                  }}
+                  onSaveCloudPress={() => {
+                    onSaveCloudPress(
+                      image,
+                      locationStatus,
+                      positionGeocode,
+                      address,
+                      isPublic,
+                      setUploading,
+                      toastRef
+                    );
+                  }}
+                />
+              </>
+            )}
+          </View>
+        </>
+      )}
     </GestureHandlerRootView>
   );
 };

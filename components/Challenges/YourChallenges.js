@@ -2,26 +2,13 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   Image,
   LogBox,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {useNavigation} from "@react-navigation/native";
-import {
-  deleteChallenge,
-  getChallengesList,
-  getFriendsChallengesList,
-} from "../../utils/challengeUtils";
-import {
-  ArrowTrendingUpIcon,
-  FireIcon,
-  MapPinIcon,
-  TrashIcon,
-} from "react-native-heroicons/outline";
-import moment from "moment";
-import "moment/locale/pl";
+import {getChallengesList} from "../../utils/challengeUtils";
 import YourChallengesCard from "./YourChallengesCard";
 
 const YourChallenges = ({refresh, setRefresh, toastRef}) => {

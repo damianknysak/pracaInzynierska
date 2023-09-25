@@ -231,6 +231,7 @@ export async function getInfoAboutUser(userId) {
   const userRef = await firestore().collection("Users").doc(userId).get();
   const userData = userRef.data();
   userData.profileImgUrl = await getProfilePicture(userId);
+  userData.id = userId;
   return userData;
 }
 

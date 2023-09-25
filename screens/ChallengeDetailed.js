@@ -12,6 +12,7 @@ import ChallengeStopwatch from "../components/Maps/ChallengeStopwatch";
 import Toast from "../components/Shared/CustomToast";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import useChallengeLocation from "../hooks/useChallengeLocation";
+import PermissionRequestView from "../components/Maps/PermissionRequestView";
 const ChallengeDetailed = () => {
   // setting start date if challenge has started
   const [startChallengeDate, setStartChallengeDate] = useState();
@@ -38,6 +39,8 @@ const ChallengeDetailed = () => {
     setChallengeFinished,
     finishChallengeDate,
     setFinishChallengeDate,
+    checkLocationPermissions,
+    requestLocationPermissions,
   } = useChallengeLocation(challenge, METERS_TO_MAKE_CHALLENGE_READY);
   const [isChallengeReadyToStart, setIsChallengeReadyToStart] = useState(false);
   const toastRef = useRef();
@@ -53,16 +56,6 @@ const ChallengeDetailed = () => {
   };
   const [distanceToStartString, setDistanceToStartString] = useState("");
   const [distanceToFinishString, setDistanceToFinishString] = useState("");
-
-  //if challenge is finished stop tracking users position
-  useEffect(() => {
-    if (challengeFinished) {
-      stopBackgroundUpdate();
-      clearInterval(intervalId);
-    } else {
-      startBackgroundUpdate();
-    }
-  }, [challengeFinished]);
 
   useEffect(() => {
     if (usersPosition && distanceToStart && distanceToFinish) {
@@ -95,16 +88,32 @@ const ChallengeDetailed = () => {
     };
   }, []);
 
+  //if challenge is finished stop tracking users position
   useEffect(() => {
-    console.log(`challengeStarted: ${challengeStarted}`);
+    if (challengeFinished) {
+      stopBackgroundUpdate();
+      clearInterval(intervalId);
+    } else {
+      startBackgroundUpdate();
+    }
+  }, [challengeFinished, hasLocationPermission]);
+
+  useEffect(() => {
     if (challengeStarted) {
       setStartChallengeDate(Date.now());
     }
   }, [challengeStarted]);
 
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+
   useEffect(() => {
-    console.log(`challengeFinished ${challengeFinished}`);
-  }, [challengeFinished]);
+    const checkPermissions = async () => {
+      const result = await checkLocationPermissions();
+      setHasLocationPermission(result);
+    };
+
+    checkPermissions();
+  }, []);
 
   return (
     <GestureHandlerRootView>
@@ -118,61 +127,68 @@ const ChallengeDetailed = () => {
             colors={["#E5E7EB", "#9CA3AF", "#4B5563"]}
           >
             <ChallengeDetailedHeader />
-
-            <View>
-              {!challengeStarted && !challengeFinished && (
-                <ChallengeDetailedDesc
-                  isCurrentUsers={isCurrentUsers}
-                  challenge={challenge}
-                />
-              )}
-              {challengeStarted && !challengeFinished && (
-                <ChallengeStopwatch
-                  time={time}
-                  setTime={setTime}
-                  intervalId={intervalId}
-                  setIntervalId={setIntervalId}
-                />
-              )}
-
-              {/* MapViews */}
-              <ChallengeStartedView
-                challenge={challenge}
-                usersPosition={usersPosition}
-                setUsersPosition={setUsersPosition}
-                challengeStarted={challengeStarted}
+            {!hasLocationPermission ? (
+              <PermissionRequestView
+                requestLocationPermissions={requestLocationPermissions}
               />
-              {!challengeFinished && (
-                <>
-                  {/* How far away from the start/finish */}
-                  <ChallengeUserDistanceInfo
-                    challengeStarted={challengeStarted}
-                    isChallengeReadyToStart={isChallengeReadyToStart}
-                    distanceToFinish={distanceToFinishString}
-                    distanceToStart={distanceToStartString}
-                  />
+            ) : (
+              <>
+                <View>
+                  {!challengeStarted && !challengeFinished && (
+                    <ChallengeDetailedDesc
+                      isCurrentUsers={isCurrentUsers}
+                      challenge={challenge}
+                    />
+                  )}
+                  {challengeStarted && !challengeFinished && (
+                    <ChallengeStopwatch
+                      time={time}
+                      setTime={setTime}
+                      intervalId={intervalId}
+                      setIntervalId={setIntervalId}
+                    />
+                  )}
 
-                  {/* Challenge start/stop btns */}
-                  <ChallengeDetailedBottomBtn
-                    challengeFinished={challengeFinished}
+                  {/* MapViews */}
+                  <ChallengeStartedView
+                    challenge={challenge}
+                    usersPosition={usersPosition}
+                    setUsersPosition={setUsersPosition}
                     challengeStarted={challengeStarted}
-                    setChallengeStarted={setChallengeStarted}
-                    isChallengeReadyToStart={isChallengeReadyToStart}
-                    resetChallenge={resetChallenge}
                   />
-                </>
-              )}
-              {challengeFinished && (
-                <ChallengeFinishedInfo
-                  startChallengeDate={startChallengeDate}
-                  finishChallengeDate={finishChallengeDate}
-                  resetChallenge={resetChallenge}
-                  time={time}
-                  challenge={challenge}
-                  toastRef={toastRef}
-                />
-              )}
-            </View>
+                  {!challengeFinished && (
+                    <>
+                      {/* How far away from the start/finish */}
+                      <ChallengeUserDistanceInfo
+                        challengeStarted={challengeStarted}
+                        isChallengeReadyToStart={isChallengeReadyToStart}
+                        distanceToFinish={distanceToFinishString}
+                        distanceToStart={distanceToStartString}
+                      />
+
+                      {/* Challenge start/stop btns */}
+                      <ChallengeDetailedBottomBtn
+                        challengeFinished={challengeFinished}
+                        challengeStarted={challengeStarted}
+                        setChallengeStarted={setChallengeStarted}
+                        isChallengeReadyToStart={isChallengeReadyToStart}
+                        resetChallenge={resetChallenge}
+                      />
+                    </>
+                  )}
+                  {challengeFinished && (
+                    <ChallengeFinishedInfo
+                      startChallengeDate={startChallengeDate}
+                      finishChallengeDate={finishChallengeDate}
+                      resetChallenge={resetChallenge}
+                      time={time}
+                      challenge={challenge}
+                      toastRef={toastRef}
+                    />
+                  )}
+                </View>
+              </>
+            )}
           </LinearGradient>
         </View>
       </View>

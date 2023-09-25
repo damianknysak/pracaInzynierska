@@ -28,13 +28,13 @@ export async function deleteChallenge(item, toastRef) {
   }
 }
 
-export async function getChallengesList() {
+export async function getChallengesList(limit = 10) {
   try {
     const colRef = await firestore()
       .collection("Challenges")
       .where("creatorId", "==", auth().currentUser.uid)
       .orderBy("date")
-      .limit(10)
+      .limit(limit)
       .get();
 
     const challenges = await Promise.all(
@@ -51,7 +51,7 @@ export async function getChallengesList() {
   }
 }
 
-export async function getFriendsChallengesList() {
+export async function getFriendsChallengesList(limit = 10) {
   try {
     const friendsRef = await firestore()
       .collection("Users")
@@ -64,7 +64,7 @@ export async function getFriendsChallengesList() {
       .collection("Challenges")
       .where("creatorId", "in", friendsIds)
       .orderBy("date")
-      .limit(10)
+      .limit(limit)
       .get();
 
     const challenges = await Promise.all(

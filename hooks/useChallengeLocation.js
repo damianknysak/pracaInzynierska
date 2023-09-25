@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {StyleSheet, Text, View, Button} from "react-native";
+import {StyleSheet, Text, View, Button, PermissionsAndroid} from "react-native";
 
 import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
@@ -35,6 +35,44 @@ const useChallengeLocation = (
       {lat: challenge.finishLatitude, lon: challenge.finishLongitude}
     );
     return dist;
+  };
+
+  const requestLocationPermissions = async () => {
+    const foreground = await Location.requestForegroundPermissionsAsync();
+    if (foreground.granted) {
+      const backgroundPermission =
+        await Location.requestBackgroundPermissionsAsync();
+      if (backgroundPermission.granted) return true;
+    }
+    return false;
+  };
+
+  const checkLocationPermissions = async () => {
+    try {
+      const grantedNotifications = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+
+      if (grantedNotifications === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Powiadomienia zostały włączone.");
+      } else {
+        console.log("Powiadomienia wyłączone.");
+      }
+
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Uprawnienia zostały udzielone.");
+        return true;
+      } else {
+        console.log("Uprawnienia nie zostały udzielone.");
+        return false;
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
   };
 
   // Define the background task for location tracking
@@ -75,14 +113,10 @@ const useChallengeLocation = (
   });
 
   // Request permissions right after starting the app
-  useEffect(() => {
-    const requestPermissions = async () => {
-      const foreground = await Location.requestForegroundPermissionsAsync();
-      if (foreground.granted)
-        await Location.requestBackgroundPermissionsAsync();
-    };
-    requestPermissions();
-  }, []);
+  // useEffect(() => {
+
+  // requestPermissions();
+  // }, []);
 
   // Start location tracking in background
   const startBackgroundUpdate = async () => {
@@ -150,6 +184,8 @@ const useChallengeLocation = (
     setChallengeFinished,
     finishChallengeDate,
     setFinishChallengeDate,
+    checkLocationPermissions,
+    requestLocationPermissions,
   };
 };
 

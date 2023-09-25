@@ -1,6 +1,6 @@
-import {View, Text, Image, TouchableOpacity} from "react-native";
-import React, {createRef, useEffect, useRef, useState} from "react";
-import MapView, {Callout, Marker, Polyline} from "react-native-maps";
+import {View} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
+import MapView, {Polyline} from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import Toast from "../components/Shared/CustomToast";
 import ChallengeMarkerView from "../components/Maps/ChallengeMarkerView";
@@ -10,10 +10,11 @@ import ConfirmChallengeModal from "../components/Maps/ConfirmChallengeModal";
 import MapViewDirections from "react-native-maps-directions";
 import SaveModal from "../components/Maps/SaveModal";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {useRoute} from "@react-navigation/native";
-import ChallengeStartedView from "../components/Maps/ChallengeStartedView";
+import NearbyActivityButton from "../components/Maps/NearbyActivityButton";
+import NearbyActivityInfo from "../components/Maps/NearbyActivityInfo";
+import NearbyActivityMarkers from "../components/Maps/NearbyActivityMarkers";
 const MapsScreen = () => {
-  const route = useRoute();
+  const [nearbyActivity, setNearbyActivity] = useState(false);
   const [position, setPosition] = useState({
     latitude: 50.3318456,
     longitude: 18.0296002,
@@ -34,9 +35,7 @@ const MapsScreen = () => {
   const [confirmationModalActive, setConfirmationModalActive] = useState(false);
   const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
   const toastRef = useRef();
-  useEffect(() => {
-    console.log();
-  }, []);
+  const [nearbyMarkersList, setNearbyMarkersList] = useState();
   useEffect(() => {
     try {
       Geolocation.getCurrentPosition((pos) => {
@@ -107,13 +106,23 @@ const MapsScreen = () => {
 
   return (
     <GestureHandlerRootView>
-      {/* {!route.params ? ( */}
       <View className="relative h-full w-screen bg-red-100">
         <Toast ref={toastRef} />
         <ChallengeButton
           color={challenge.active ? "lightgreen" : "orange"}
           onChallengePress={onChallengePress}
         />
+        <NearbyActivityButton
+          nearbyActivity={nearbyActivity}
+          setNearbyActivity={setNearbyActivity}
+        />
+        {!challenge.active && nearbyActivity && (
+          <NearbyActivityInfo
+            nearbyMarkersList={nearbyMarkersList}
+            setNearbyMarkersList={setNearbyMarkersList}
+          />
+        )}
+
         {challenge.active && !challenge.routeType && (
           <ChallengeBottomBar
             start={challenge.setStart}
@@ -225,11 +234,9 @@ const MapsScreen = () => {
               setPinPosition={setPinFinish}
             />
           )}
+          {nearbyActivity && <NearbyActivityMarkers list={nearbyMarkersList} />}
         </MapView>
       </View>
-      {/* ) : ( */}
-      {/* // <ChallengeStartedView challenge={route.params.challengeToBeStarted} /> */}
-      {/* )} */}
     </GestureHandlerRootView>
   );
 };
