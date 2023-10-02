@@ -187,6 +187,7 @@ export async function sendFriendRequest(email, toastRef) {
           text: "Zaproszenie wysłane",
           duration: 2000,
         });
+        return true;
       } else {
         toastRef.current.show({
           type: "warning",
@@ -228,11 +229,31 @@ const getProfilePicture = async (userId) => {
 };
 
 export async function getInfoAboutUser(userId) {
-  const userRef = await firestore().collection("Users").doc(userId).get();
-  const userData = userRef.data();
-  userData.profileImgUrl = await getProfilePicture(userId);
-  userData.id = userId;
-  return userData;
+  try {
+    const userRef = await firestore().collection("Users").doc(userId).get();
+    const userData = userRef.data();
+    userData.profileImgUrl = await getProfilePicture(userId);
+    userData.id = userId;
+    return userData;
+  } catch (e) {
+    console.error(`error getInfoAboutUser: ${e}`);
+  }
+}
+
+export async function getInfoAboutUserFromEmail(email) {
+  const userRef = await firestore()
+    .collection("Users")
+    .where("email", "==", email)
+    .limit(1)
+    .get();
+  if (!userRef.empty) {
+    const userData = userRef.docs[0].data();
+    userData.profileImgUrl = await getProfilePicture(userRef.docs[0].id);
+    userData.id = userRef.docs[0].id;
+    return userData;
+  } else {
+    return null;
+  }
 }
 
 export async function declineInvitation(creatorId) {

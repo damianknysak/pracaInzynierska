@@ -3,13 +3,16 @@ import {createContext, useContext} from "react";
 import useAuth from "./useAuth";
 import firestore from "@react-native-firebase/firestore";
 import {getAddressFromCoordinates} from "../utils/mapsUtils";
+import {getNearbyActivityList} from "../utils/imageUtils";
 
 const HomeActivityContext = createContext({});
 
 export const HomeActivityProvider = ({children}) => {
   const {user} = useAuth();
   const [activityList, setActivityList] = useState();
-
+  const [friendsActivityList, setFriendsActivityList] = useState();
+  const [friendsActivityListPending, setFriendsActivityListPending] =
+    useState(false);
   const getAddressAsync = async (item) => {
     try {
       const start = await getAddressFromCoordinates({
@@ -85,14 +88,42 @@ export const HomeActivityProvider = ({children}) => {
     }
   };
 
+  const fetchFriendsActivity = async () => {
+    try {
+      setFriendsActivityListPending(true);
+      const activity = await getNearbyActivityList();
+      activity.sort((a, b) => {
+        const dateA =
+          a.activityType == "image" ? a.image.date : a.challenge.date;
+        const dateB =
+          b.activityType == "image" ? b.image.date : b.challenge.date;
+        if (dateA < dateB) {
+          return 1;
+        } else if (dateA > dateB) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+      setFriendsActivityList(activity);
+      setFriendsActivityListPending(false);
+    } catch (e) {
+      console.log(`Błąd podczas pobierania aktywności: ${e}`);
+    }
+  };
+
   useEffect(() => {
     fetchActivity();
+    fetchFriendsActivity();
   }, []);
   return (
     <HomeActivityContext.Provider
       value={{
         activityList,
         fetchActivity,
+        fetchFriendsActivity,
+        friendsActivityList,
+        friendsActivityListPending,
       }}
     >
       {children}

@@ -173,6 +173,16 @@ const MapsScreen = () => {
             challenge.setFinish || setPinFinish(e);
           }}
         >
+          {/* user location */}
+          <ChallengeMarkerView
+            type="user"
+            draggable={false}
+            pinPosition={{
+              latitude: position.latitude,
+              longitude: position.longitude,
+            }}
+          />
+
           {challenge.routeType == "google" && (
             <MapViewDirections
               origin={{

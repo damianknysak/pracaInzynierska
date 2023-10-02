@@ -139,7 +139,6 @@ export const getChallengesLeaderboard = async (challengeId) => {
       .orderBy("time")
       .limit(10);
     const leaderboardSnapshot = await leaderboardRef.get();
-
     if (leaderboardSnapshot.empty) {
       console.log("Kolekcja Leaderboard jest pusta.");
       return null; // Zwracamy pustą tablicę lub odpowiednią wartość w przypadku braku danych.

@@ -179,6 +179,10 @@ export const getNearbyActivityList = async () => {
         images.forEach((image) => {
           nearbyActivityList.push({
             activityCreator: friendsList[i].id,
+            activityCreatorName:
+              activityCreatorInfo.firstName +
+              " " +
+              activityCreatorInfo.lastName,
             activityCreatorProfileImgUrl: activityCreatorInfo.profileImgUrl,
             activityType: "image",
             image: image,
@@ -191,11 +195,7 @@ export const getNearbyActivityList = async () => {
     for (let i = 0; i < friendsList.length; i++) {
       const querySnapshotChallenges = await firestore()
         .collection("Challenges")
-        .where(
-          "creatorId",
-          "in",
-          [friendsList[i].id] // Użyj tablicy zawierającej tylko jednego id
-        )
+        .where("creatorId", "in", [friendsList[i].id])
         .get();
 
       const challengesList = querySnapshotChallenges.docs.map((doc) => {
@@ -208,6 +208,8 @@ export const getNearbyActivityList = async () => {
         const activityCreatorInfo = await getInfoAboutUser(challenge.creatorId);
         nearbyActivityList.push({
           activityCreator: challenge.creatorId,
+          activityCreatorName:
+            activityCreatorInfo.firstName + " " + activityCreatorInfo.lastName,
           activityCreatorProfileImgUrl: activityCreatorInfo.profileImgUrl,
           activityType: "challenge",
           challenge: challenge,
@@ -219,4 +221,12 @@ export const getNearbyActivityList = async () => {
   } catch (e) {
     console.error(`error getNearbyActivityList ${e}`);
   }
+};
+
+export const imgURLToDownloadURL = async (img, user = "current") => {
+  const currentUserUid = user == "current" ? auth().currentUser.uid : user;
+  const reference = storage().ref(
+    `UsersStorage/${currentUserUid}/cameraImages/${img}`
+  );
+  return await reference.getDownloadURL();
 };

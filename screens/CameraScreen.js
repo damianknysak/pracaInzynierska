@@ -3,21 +3,17 @@ import React, {useEffect, useRef, useState} from "react";
 import * as MediaLibrary from "expo-media-library";
 import {Camera, CameraType} from "expo-camera";
 import TakePictureButton from "../components/Camera/TakePictureButton";
-import auth from "@react-native-firebase/auth";
-import storage from "@react-native-firebase/storage";
 import GoBackButton from "../components/Camera/GoBackButton";
 import BottomPanel from "../components/Camera/BottomPanel";
 import FlashButton from "../components/Camera/FlashButton";
 import SwitchCameraButton from "../components/Camera/SwitchCameraButton";
 import {FlipType, manipulateAsync, SaveFormat} from "expo-image-manipulator";
-import firestore from "@react-native-firebase/firestore";
 import GalleryButton from "../components/Camera/GalleryButton";
 import PropertySwitches from "../components/Camera/PropertySwitches";
 import Geolocation from "@react-native-community/geolocation";
 import {getAddressFromCoordinates} from "../utils/mapsUtils";
 import BottomInfo from "../components/Camera/BottomInfo";
-import {notifyFriends} from "../utils/notifyUtils";
-import {addImgToUser, onSaveCloudPress, onSavePress} from "../utils/imageUtils";
+import {onSaveCloudPress, onSavePress} from "../utils/imageUtils";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Toast from "../components/Shared/CustomToast";
 
@@ -105,6 +101,7 @@ const CameraScreen = () => {
   }
 
   const toastRef = useRef();
+
   return (
     <GestureHandlerRootView>
       {hasCameraPermission === false ? (

@@ -8,8 +8,10 @@ import {
   MapPinIcon,
 } from "react-native-heroicons/outline";
 import ChallengeProps from "./ChallengeProps";
+import {useNavigation} from "@react-navigation/native";
 
 const ChallengeView = ({item, toastRef, onRefresh}) => {
+  const navigation = useNavigation();
   return (
     <>
       <View className="relative items-center bg-black/50 rounded-xl my-2">
@@ -59,8 +61,13 @@ const ChallengeView = ({item, toastRef, onRefresh}) => {
               : `${item.distance.toFixed(2)} km`}
           </Text>
         </View>
-        <TouchableOpacity className="bg-orange-400 px-3 py-2 mb-3 rounded-xl">
-          <Text className="text-white font-bold">Przejdź do wyzwania</Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Challenges");
+          }}
+          className="bg-orange-400 px-3 py-2 mb-3 rounded-xl"
+        >
+          <Text className="text-white font-bold">Przejdź do wyzwań</Text>
         </TouchableOpacity>
       </View>
     </>

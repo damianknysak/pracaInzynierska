@@ -4,7 +4,6 @@ import {
   ArrowLeftIcon,
   FireIcon,
   PlusIcon,
-  QrCodeIcon,
 } from "react-native-heroicons/outline";
 import {useNavigation} from "@react-navigation/native";
 

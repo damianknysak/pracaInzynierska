@@ -92,9 +92,7 @@ const FriendsChallengeCard = ({challenge}) => {
         }}
         className="bg-orange-400 px-3 py-2 rounded-xl"
       >
-        <Text className="text-white font-bold text-center">
-          Zobacz szczegóły
-        </Text>
+        <Text className="text-white font-bold text-center">Przejdź</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {

@@ -19,23 +19,32 @@ const LeaderboardCard = ({time, userId, position}) => {
   return (
     <>
       {userInfo && (
-        <View className="flex-row my-1 items-center bg-black/50 p-1 rounded-xl border border-white">
-          <View className="flex-row space-x-10 w-1/3 mr-3">
-            <Text className="text-xl font-bold">{position}</Text>
-            <View className="items-center">
-              <Text className="text-xl">
-                {timeObject.hr + ":" + timeObject.min + ":" + timeObject.sec}
-              </Text>
-            </View>
-          </View>
-          <View className="flex-row items-center flex-1 space-x-3">
-            <Image
-              className="w-10 h-10 rounded-full"
-              source={{uri: userInfo.profileImgUrl}}
-            />
-            <Text className="font-bold">
+        <View
+          className={`
+          ${
+            position == 1 ? "border-yellow-400" : "border-white"
+          } flex-row space-x-2 my-1 items-center bg-gray-500 p-1 rounded-xl border-2 shadow-lg`}
+        >
+          <Text
+            className={`text-xl font-bold ${
+              position == 1 && "text-yellow-400"
+            }`}
+          >
+            {position}.
+          </Text>
+          <Text className="text-lg text-white">
+            {timeObject.hr + ":" + timeObject.min + ":" + timeObject.sec}
+          </Text>
+          <View className="flex-row items-center flex-1 space-x-2">
+            <Text className={`font-bold ${position == 1 && "text-orange-400"}`}>
               {userInfo.firstName + " " + userInfo.lastName}
             </Text>
+            <View className="border-2 border-white rounded-full">
+              <Image
+                className="w-10 h-10 rounded-full"
+                source={{uri: userInfo.profileImgUrl}}
+              />
+            </View>
           </View>
         </View>
       )}

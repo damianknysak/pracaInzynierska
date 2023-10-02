@@ -19,9 +19,10 @@ import Toast from "../components/Shared/CustomToast";
 import {Alert} from "react-native";
 import messaging from "@react-native-firebase/messaging";
 import axios from "axios";
+import FriendsActivityView from "../components/Home/FriendsActivityView";
 
 const HomeScreen = () => {
-  const [headerMenu, setHeaderMenu] = useState("friends");
+  const [headerMenu, setHeaderMenu] = useState("main");
   const {getCurrentUserInfoDB} = useAuth();
   const [currentUser, setCurrentUser] = useState();
   const navigation = useNavigation();
@@ -47,51 +48,6 @@ const HomeScreen = () => {
     }
   }, [headerMenu]);
   const toastRef = useRef();
-
-  // const asynctest = async () => {
-  //   await messaging().registerDeviceForRemoteMessages();
-  //   const token = await messaging().getToken();
-  //   console.log(token);
-  // };
-
-  // useEffect(() => {
-  //   asynctest();
-  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-  //     Alert.alert("A new FCM message arrived!");
-  //     console.log(JSON.stringify(remoteMessage));
-  //   });
-  //   return unsubscribe;
-  // }, []);
-
-  // const sendNotification = async () => {
-  //   const FCM_ENDPOINT =
-  //     "https://fcm.googleapis.com/v1/projects/damianinzynierka/messages:send";
-  //   const serverKey = "b0e71f03f07f05da9380414199da3576a48d05a0";
-  //   const deviceToken =
-  //     "fdz9bBgASpa3vk-VlHsUey:APA91bG_n8DV5VVeeOCsYxnZSWdDeyYEHScRsI5bcCJDOWCWcoxWB7Z720xsFp2guBLPZJwZzCOwAPtzBbJpuHJBAkrq9Vuml-wSUr8pBj68yid_1-5oWC8q4MCpQNtT1PR7Zcjk9d3F"; // Tu wstaw token urządzenia
-
-  //   const notification = {
-  //     message: {
-  //       token: deviceToken,
-  //       notification: {
-  //         title: "Tytuł powiadomienia",
-  //         body: "Treść powiadomienia",
-  //       },
-  //     },
-  //   };
-
-  //   try {
-  //     await axios.post(FCM_ENDPOINT, notification, {
-  //       headers: {
-  //         Authorization: `Bearer ${serverKey}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     console.log("Powiadomienie wysłane!");
-  //   } catch (error) {
-  //     console.error("Błąd wysyłki powiadomienia:", error);
-  //   }
-  // };
 
   return (
     <GestureHandlerRootView>
@@ -125,19 +81,10 @@ const HomeScreen = () => {
                   userName={currentUser?.firstName}
                   notificationsList={notificationsList}
                 />
-                {headerMenu == "friends" && (
+                {headerMenu == "main" && (
                   <>
                     <MainMenu />
                     <PopularPlaces />
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("Test");
-                      }}
-                    >
-                      <Text className="text-xl text-red-500">
-                        Go to Test Screen
-                      </Text>
-                    </TouchableOpacity>
                   </>
                 )}
               </ScrollView>
@@ -148,6 +95,7 @@ const HomeScreen = () => {
                   fetchActivity={fetchActivity}
                 />
               )}
+              {headerMenu == "friends" && <FriendsActivityView />}
             </View>
           </SafeAreaView>
         </LinearGradient>

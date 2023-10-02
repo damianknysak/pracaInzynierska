@@ -69,18 +69,35 @@ const Header = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setHeaderMenu("friends");
+            setHeaderMenu("main");
           }}
           className={
-            headerMenu != "friends"
+            headerMenu != "main"
               ? "flex-row space-x-1 bg-black/50 py-2 flex-1 items-center justify-center rounded-3xl"
               : "flex-row space-x-1 bg-blue-100/50 py-2 flex-1 items-center justify-center rounded-3xl"
           }
         >
-          <LinkIcon
-            size={20}
-            color={headerMenu != "friends" ? "gray" : "black"}
-          />
+          <LinkIcon size={20} color={headerMenu != "main" ? "gray" : "black"} />
+          <Text
+            className={
+              headerMenu != "main"
+                ? "text-gray-500 text-xs"
+                : "text-black text-xs"
+            }
+          >
+            Główna
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setHeaderMenu("friends");
+          }}
+          className={
+            headerMenu != "friends"
+              ? "bg-black/50  py-2 flex-1 items-center justify-center rounded-3xl"
+              : "bg-blue-100/50  py-2 flex-1 items-center justify-center rounded-3xl"
+          }
+        >
           <Text
             className={
               headerMenu != "friends"
@@ -89,26 +106,6 @@ const Header = ({
             }
           >
             Znajomi
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setHeaderMenu("community");
-          }}
-          className={
-            headerMenu != "community"
-              ? "bg-black/50  py-2 flex-1 items-center justify-center rounded-3xl"
-              : "bg-blue-100/50  py-2 flex-1 items-center justify-center rounded-3xl"
-          }
-        >
-          <Text
-            className={
-              headerMenu != "community"
-                ? "text-gray-500 text-xs"
-                : "text-black text-xs"
-            }
-          >
-            Społeczność
           </Text>
         </TouchableOpacity>
       </View>

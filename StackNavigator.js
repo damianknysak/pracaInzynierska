@@ -15,6 +15,7 @@ import CustomDialogScreen from "./screens/CustomDialogScreen";
 import ProfileListsScreen from "./screens/ProfileListsScreen";
 import ChallengeDetailed from "./screens/ChallengeDetailed";
 import ChallengeLeaderboard from "./screens/ChallengeLeaderboard";
+import QrCodeScreen from "./screens/QrCodeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,14 @@ const StackNavigator = () => {
               <Stack.Screen
                 name="ChallengeLeaderboard"
                 component={ChallengeLeaderboard}
+                options={{
+                  presentation: "containedTransparentModal",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="QrCode"
+                component={QrCodeScreen}
                 options={{
                   presentation: "containedTransparentModal",
                   headerShown: false,

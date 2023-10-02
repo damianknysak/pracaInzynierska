@@ -29,6 +29,7 @@ const ChallengeLeaderboard = () => {
   const getLeaderboardAsync = async () => {
     setPending(true);
     const challenges = await getChallengesLeaderboard(challengeId);
+    challenges && challenges.sort((a, b) => a.time - b.time);
     challenges && setLeaderboardArray(challenges);
     setPending(false);
   };
@@ -57,8 +58,10 @@ const ChallengeLeaderboard = () => {
               colors={["#E5E7EB", "#9CA3AF", "#4B5563"]}
             >
               <View className="mt-4 flex-row items-center justify-center space-x-2">
-                <Text className="font-bold text-center text-lg">Top 10</Text>
-                <TrophyIcon size={30} color="gold" />
+                <Text className="font-bold text-center text-lg">
+                  Leaderboard
+                </Text>
+                <TrophyIcon size={30} color="black" />
               </View>
 
               <TouchableOpacity
@@ -69,20 +72,7 @@ const ChallengeLeaderboard = () => {
               >
                 <XMarkIcon size={30} color="black" />
               </TouchableOpacity>
-              <View className="flex-row bg-black/50 mt-2 py-1">
-                <View className="items-center ml-1">
-                  <TrophyIcon size={30} color="orange" />
-                  <Text className="text-white">Pozycja</Text>
-                </View>
-                <View className="ml-6">
-                  <ClockIcon size={30} color="blue" />
-                  <Text className="text-white">Czas</Text>
-                </View>
-                <View className="ml-7 items-center">
-                  <UserIcon size={30} color="black" />
-                  <Text className="text-white">Rekordzista</Text>
-                </View>
-              </View>
+
               <ScrollView className="mx-3 my-1">
                 {pending && <ActivityIndicator size={30} color="white" />}
                 {leaderboardArray &&

@@ -3797,6 +3797,11 @@ didyoumean@^1.2.2:
   resolved "https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz"
   integrity sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==
 
+dijkstrajs@^1.0.1:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/dijkstrajs/-/dijkstrajs-1.0.3.tgz"
+  integrity sha512-qiSlmBq9+BCdCA/L46dw8Uy93mloxsPSbwnm5yrKn2vMPiy8KyAskTF6zuV/j5BMsmOGZDPs7KjU+mjb670kfA==
+
 dir-glob@^3.0.1:
   version "3.0.1"
   resolved "https://registry.npmjs.org/dir-glob/-/dir-glob-3.0.1.tgz"
@@ -3853,6 +3858,11 @@ emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz"
   integrity sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
+
+encode-utf8@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/encode-utf8/-/encode-utf8-1.0.3.tgz"
+  integrity sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -4002,6 +4012,13 @@ expo-asset@~8.9.1:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-barcode-scanner@~12.3.2:
+  version "12.3.2"
+  resolved "https://registry.yarnpkg.com/expo-barcode-scanner/-/expo-barcode-scanner-12.3.2.tgz#d0023e8c9a3a8cef769bbc2080b5c275188affe8"
+  integrity sha512-6s8r7/H2pP1sscCm4gwIaVaqOTPBn3qDbh0d27Q79Ix5/p+yPVd/hkD0GGooDLHHcdOWTweQzrlRCxOdSVh8ZQ==
+  dependencies:
+    expo-image-loader "~4.1.0"
+
 expo-blur@~12.2.2:
   version "12.2.2"
   resolved "https://registry.npmjs.org/expo-blur/-/expo-blur-12.2.2.tgz"
@@ -4025,7 +4042,7 @@ expo-constants@~14.2.0, expo-constants@~14.2.1:
 
 expo-crypto@~12.2.1:
   version "12.2.2"
-  resolved "https://registry.yarnpkg.com/expo-crypto/-/expo-crypto-12.2.2.tgz#e930c77a44aa1816e9e3063a0dd43c6477cc8787"
+  resolved "https://registry.npmjs.org/expo-crypto/-/expo-crypto-12.2.2.tgz"
   integrity sha512-83SZju/l0UL4n+Dgt+T1csiySa0gwCeE6BKKHzlO+4lJ6B8xXZ5ypu97ttWATBsqcpF/bj1RmYPbfbKsZ+4ixA==
   dependencies:
     base64-js "^1.3.0"
@@ -6892,7 +6909,7 @@ prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.6.0, prop-types@^15.7.2:
+prop-types@*, prop-types@^15.6.0, prop-types@^15.7.2, prop-types@^15.8.0:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -6955,6 +6972,16 @@ qrcode-terminal@0.11.0:
   version "0.11.0"
   resolved "https://registry.npmjs.org/qrcode-terminal/-/qrcode-terminal-0.11.0.tgz"
   integrity sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==
+
+qrcode@^1.5.1:
+  version "1.5.3"
+  resolved "https://registry.npmjs.org/qrcode/-/qrcode-1.5.3.tgz"
+  integrity sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==
+  dependencies:
+    dijkstrajs "^1.0.1"
+    encode-utf8 "^1.0.3"
+    pngjs "^5.0.0"
+    yargs "^15.3.1"
 
 qs@6.11.0:
   version "6.11.0"
@@ -7098,6 +7125,14 @@ react-native-push-notification@^8.1.1:
   version "8.1.1"
   resolved "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
   integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
+
+react-native-qrcode-svg@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/react-native-qrcode-svg/-/react-native-qrcode-svg-6.2.0.tgz"
+  integrity sha512-rb2PgUwT8QpQyReVYNvzRY84AHsMh81354Tnkfp6MfqRbcdJURhnBWLBOO11pLMS6eXiwlq4SkcQxy88hRq+Dw==
+  dependencies:
+    prop-types "^15.8.0"
+    qrcode "^1.5.1"
 
 react-native-reanimated@^3.4.0:
   version "3.4.0"
@@ -8627,7 +8662,7 @@ yargs-parser@^21.1.1:
   resolved "https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz"
   integrity sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==
 
-yargs@^15.1.0:
+yargs@^15.1.0, yargs@^15.3.1:
   version "15.4.1"
   resolved "https://registry.npmjs.org/yargs/-/yargs-15.4.1.tgz"
   integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==

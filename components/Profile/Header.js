@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import {View, Text, TouchableOpacity} from "react-native";
 import React from "react";
-import { ArrowLeftIcon, QrCodeIcon } from "react-native-heroicons/outline";
-import { useNavigation } from "@react-navigation/native";
+import {ArrowLeftIcon, QrCodeIcon} from "react-native-heroicons/outline";
+import {useNavigation} from "@react-navigation/native";
 
 const Header = () => {
   const navigation = useNavigation();
@@ -17,7 +17,12 @@ const Header = () => {
         <ArrowLeftIcon size={25} color="white" />
       </TouchableOpacity>
       <Text className="text-lg text-white">Twój profil</Text>
-      <TouchableOpacity className="w-12 h-12 items-center justify-center bg-black/50 rounded-full">
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("QrCode");
+        }}
+        className="w-12 h-12 items-center justify-center bg-black/50 rounded-full"
+      >
         <QrCodeIcon size={25} color="white" />
       </TouchableOpacity>
     </View>

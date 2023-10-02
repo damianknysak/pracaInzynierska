@@ -1,8 +1,8 @@
-import { View, Text, ScrollView, Image, Animated } from "react-native";
-import React, { useRef } from "react";
+import {View, Text, ScrollView, Image, Animated} from "react-native";
+import React, {useRef} from "react";
 import MainMenuElement from "./MainMenuElement";
-import { Dimensions } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {Dimensions} from "react-native";
+import {useNavigation} from "@react-navigation/native";
 
 const MainMenu = () => {
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -13,17 +13,16 @@ const MainMenu = () => {
   return (
     <Animated.ScrollView
       showsHorizontalScrollIndicator={false}
-      onScroll={Animated.event(
-        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-        { useNativeDriver: true }
-      )}
+      onScroll={Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
+        useNativeDriver: true,
+      })}
       scrollEventThrottle={16}
       snapToInterval={264}
       decelerationRate={20}
       horizontal
-      contentContainerStyle={{ alignItems: "center" }}
+      contentContainerStyle={{alignItems: "center"}}
     >
-      <View style={{ width: SPACER_ITEM_SIZE }} />
+      <View style={{width: SPACER_ITEM_SIZE}} />
       <MainMenuElement
         scrollX={scrollX}
         index={0}
@@ -40,10 +39,10 @@ const MainMenu = () => {
         index={1}
         imgURL="https://shorturl.at/lox27"
         smallDesc="Stwórz wyzwanie"
-        desc="Rozpocznij ryzwalizacje i podejmij wyzwanie ..."
-        buttonDesc="Stwórz"
+        desc="Rozpocznij rywalizacje i podejmij wyzwanie ..."
+        buttonDesc="Przejdź"
         onButtonPress={() => {
-          console.log("click");
+          navigation.navigate("Challenges");
         }}
       />
       <MainMenuElement
@@ -52,9 +51,9 @@ const MainMenu = () => {
         imgURL="https://shorturl.at/ABEH9"
         smallDesc="Otwórz mape"
         desc="Szukaj ciekawych lokalizacji na mapie ..."
-        buttonDesc="Szukaj"
+        buttonDesc="Zobacz"
         onButtonPress={() => {
-          console.log("click");
+          navigation.navigate("Maps");
         }}
       />
       <MainMenuElement
@@ -62,57 +61,14 @@ const MainMenu = () => {
         index={3}
         imgURL="https://shorturl.at/GKTY7"
         smallDesc="Przejdź do strony"
-        desc="Przejdź do polecanego przez nas artykułu ..."
+        desc="Daj się poznać i ustaw zdjęcie profilowe"
         buttonDesc="Idź"
         onButtonPress={() => {
-          console.log("click");
+          navigation.navigate("Profile");
         }}
       />
-      <MainMenuElement
-        scrollX={scrollX}
-        index={4}
-        imgURL="https://shorturl.at/ABEH9"
-        smallDesc="Otwórz mape"
-        desc="Szukaj ciekawych lokalizacji na mapie ..."
-        buttonDesc="Szukaj"
-        onButtonPress={() => {
-          console.log("click");
-        }}
-      />
-      <MainMenuElement
-        scrollX={scrollX}
-        index={5}
-        imgURL="https://shorturl.at/ABEH9"
-        smallDesc="Otwórz mape"
-        desc="Szukaj ciekawych lokalizacji na mapie ..."
-        buttonDesc="Szukaj"
-        onButtonPress={() => {
-          console.log("click");
-        }}
-      />
-      <MainMenuElement
-        scrollX={scrollX}
-        index={6}
-        imgURL="https://shorturl.at/ABEH9"
-        smallDesc="Otwórz mape"
-        desc="Szukaj ciekawych lokalizacji na mapie ..."
-        buttonDesc="Szukaj"
-        onButtonPress={() => {
-          console.log("click");
-        }}
-      />
-      <MainMenuElement
-        scrollX={scrollX}
-        index={7}
-        imgURL="https://shorturl.at/ABEH9"
-        smallDesc="Otwórz mape"
-        desc="Szukaj ciekawych lokalizacji na mapie ..."
-        buttonDesc="Szukaj"
-        onButtonPress={() => {
-          console.log("click");
-        }}
-      />
-      <View style={{ width: SPACER_ITEM_SIZE }} />
+
+      <View style={{width: SPACER_ITEM_SIZE}} />
     </Animated.ScrollView>
   );
 };

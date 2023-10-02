@@ -13,8 +13,10 @@ import {
 } from "react-native-heroicons/outline";
 import moment from "moment";
 import "moment/locale/pl";
+import {useNavigation} from "@react-navigation/native";
 
 const ChallengesList = ({list}) => {
+  const navigation = useNavigation();
   return (
     <View>
       {list.map((challenge) => (
@@ -38,9 +40,14 @@ const ChallengesList = ({list}) => {
                 : `${challenge.distance.toFixed(2)} km`}
             </Text>
           </View>
-          <TouchableOpacity className="bg-orange-400 px-3 py-2 rounded-xl">
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Challenges");
+            }}
+            className="bg-orange-400 px-3 py-2 rounded-xl"
+          >
             <Text className="text-white font-bold text-center">
-              Przejdź do wyzwania
+              Przejdź do wyzwań
             </Text>
           </TouchableOpacity>
         </View>
