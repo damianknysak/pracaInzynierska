@@ -1,6 +1,6 @@
-import {View} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
-import MapView, {Polyline} from "react-native-maps";
+import { View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import MapView, { Polyline } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import Toast from "../components/Shared/CustomToast";
 import ChallengeMarkerView from "../components/Maps/ChallengeMarkerView";
@@ -9,10 +9,11 @@ import ChallengeBottomBar from "../components/Maps/ChallengeBottomBar";
 import ConfirmChallengeModal from "../components/Maps/ConfirmChallengeModal";
 import MapViewDirections from "react-native-maps-directions";
 import SaveModal from "../components/Maps/SaveModal";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import NearbyActivityButton from "../components/Maps/NearbyActivityButton";
 import NearbyActivityInfo from "../components/Maps/NearbyActivityInfo";
 import NearbyActivityMarkers from "../components/Maps/NearbyActivityMarkers";
+import { GOOGLE_MAPS_APIKEY } from "../utils/mapsUtils";
 const MapsScreen = () => {
   const [nearbyActivity, setNearbyActivity] = useState(false);
   const [position, setPosition] = useState({
@@ -33,9 +34,9 @@ const MapsScreen = () => {
   const [pinStart, setPinStart] = useState({});
   const [pinFinish, setPinFinish] = useState({});
   const [confirmationModalActive, setConfirmationModalActive] = useState(false);
-  const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
   const toastRef = useRef();
   const [nearbyMarkersList, setNearbyMarkersList] = useState();
+
   useEffect(() => {
     try {
       Geolocation.getCurrentPosition((pos) => {

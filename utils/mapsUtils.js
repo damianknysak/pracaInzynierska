@@ -1,4 +1,6 @@
-export function getAddressFromCoordinates({latitude, longitude}) {
+export const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
+
+export function getAddressFromCoordinates({ latitude, longitude }) {
   return new Promise((resolve, reject) => {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=13&addressdetails=1`;
     fetch(url)

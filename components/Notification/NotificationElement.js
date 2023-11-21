@@ -15,25 +15,17 @@ import {
   UserPlusIcon,
   XMarkIcon,
 } from "react-native-heroicons/outline";
-import {
-  addUserToFriends,
-  declineInvitation,
-  getInfoAboutUser,
-} from "../../utils/firebaseUtils";
+import { addUserToFriends, declineInvitation } from "../../utils/firebaseUtils";
 import { deleteNotification } from "../../utils/notifyUtils";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-  PanGestureHandler,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
+import useHomeActivity from "../../hooks/useHomeActivity";
 
 const NotificationElement = ({ item, scrollViewRef }) => {
   const [senderInfo, setSenderInfo] = useState(item.senderInfo);
@@ -43,6 +35,8 @@ const NotificationElement = ({ item, scrollViewRef }) => {
   const [loading, setLoading] = useState(false);
   const SCREEN_WIDTH = Dimensions.get("window").width;
   const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3;
+  const navigation = useNavigation();
+  const { requestToChangeHomeHeader } = useHomeActivity();
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -92,7 +86,16 @@ const NotificationElement = ({ item, scrollViewRef }) => {
       {isDeleted ? (
         <></>
       ) : (
-        <View>
+        <TouchableOpacity
+          onPress={() => {
+            if (item && item.notificationType === "imageAdd") {
+              requestToChangeHomeHeader("friends");
+              navigation.navigate("Home");
+            }
+            if (item && item.notificationType === "challengeAdd")
+              navigation.navigate("Challenges");
+          }}
+        >
           <GestureDetector gesture={gesture}>
             <Animated.View
               onLayout={(event) => {
@@ -176,7 +179,7 @@ const NotificationElement = ({ item, scrollViewRef }) => {
           >
             <TrashIcon size={25} color="red" />
           </Animated.View>
-        </View>
+        </TouchableOpacity>
       )}
     </>
   );

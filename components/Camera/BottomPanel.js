@@ -32,7 +32,7 @@ const BottomPanel = ({
       <TouchableOpacity
         disabled={uploading}
         onPress={onSaveCloudPress}
-        className="bg-black/50 p-4 px-5 flex-row items-center space-x-1 rounded-full"
+        className="bg-black/50 bg-blue-500 p-4 px-5 flex-row items-center space-x-1 rounded-full"
       >
         {uploading ? (
           <ActivityIndicator size={25} color="white" />
@@ -41,10 +41,6 @@ const BottomPanel = ({
         )}
 
         <Text className="text-white font-semibold">Zapisz</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="bg-blue-500 p-4 px-5 flex-row items-center space-x-1 rounded-full">
-        <Text className="text-white font-semibold">Dalej</Text>
-        <PaperAirplaneIcon size={25} color="white" />
       </TouchableOpacity>
     </View>
   );

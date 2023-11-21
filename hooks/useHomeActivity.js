@@ -1,18 +1,25 @@
-import {useEffect, useState} from "react";
-import {createContext, useContext} from "react";
+import { useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import useAuth from "./useAuth";
 import firestore from "@react-native-firebase/firestore";
-import {getAddressFromCoordinates} from "../utils/mapsUtils";
-import {getNearbyActivityList} from "../utils/imageUtils";
+import { getAddressFromCoordinates } from "../utils/mapsUtils";
+import { getNearbyActivityList } from "../utils/imageUtils";
 
 const HomeActivityContext = createContext({});
 
-export const HomeActivityProvider = ({children}) => {
-  const {user} = useAuth();
+export const HomeActivityProvider = ({ children }) => {
+  const { user } = useAuth();
   const [activityList, setActivityList] = useState();
   const [friendsActivityList, setFriendsActivityList] = useState();
+  const [requestChangeHomeHeader, setRequestChangeHomeHeader] = useState();
+
   const [friendsActivityListPending, setFriendsActivityListPending] =
     useState(false);
+
+  const requestToChangeHomeHeader = (headerType) => {
+    setRequestChangeHomeHeader(headerType);
+  };
+
   const getAddressAsync = async (item) => {
     try {
       const start = await getAddressFromCoordinates({
@@ -70,7 +77,9 @@ export const HomeActivityProvider = ({children}) => {
       const promises = combinedList.map(async (element) => {
         //if is of type challenge type
         if (element.startLatitude) {
-          const {startAddress, finishAddress} = await getAddressAsync(element);
+          const { startAddress, finishAddress } = await getAddressAsync(
+            element
+          );
           return {
             ...element,
             startAddress: startAddress,
@@ -124,6 +133,8 @@ export const HomeActivityProvider = ({children}) => {
         fetchFriendsActivity,
         friendsActivityList,
         friendsActivityListPending,
+        requestToChangeHomeHeader,
+        requestChangeHomeHeader,
       }}
     >
       {children}

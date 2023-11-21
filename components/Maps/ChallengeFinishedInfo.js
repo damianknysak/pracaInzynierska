@@ -1,5 +1,5 @@
-import {View, Text, TouchableOpacity} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CakeIcon,
   ShareIcon,
@@ -12,9 +12,12 @@ import {
   getChallengesLeaderboard,
   getUserPositionInLeaderboard,
 } from "../../utils/challengeUtils";
-import {secondsToTimeObject, timeObjectToSeconds} from "../../utils/timeUtils";
+import {
+  secondsToTimeObject,
+  timeObjectToSeconds,
+} from "../../utils/timeUtils";
 import Toast from "../Shared/CustomToast";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const ChallengeFinishedInfo = ({
   startChallengeDate,
@@ -66,10 +69,6 @@ const ChallengeFinishedInfo = ({
   }, [finishChallengeDate]);
   useEffect(() => {
     if (finishedTime) {
-      // console.log(`startChallengeDate: ${JSON.stringify(startChallengeDate)}`);
-      // console.log(
-      //   `finishChallengeDate: ${JSON.stringify(finishChallengeDate)}`
-      // );
       console.log(`finishedTime: ${JSON.stringify(finishedTime)}`);
       getChallengesLeaderboardAsync();
     }

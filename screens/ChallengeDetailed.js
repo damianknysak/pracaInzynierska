@@ -1,7 +1,7 @@
-import {View} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
-import {useRoute} from "@react-navigation/native";
-import {LinearGradient} from "expo-linear-gradient";
+import { View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import ChallengeStartedView from "../components/Maps/ChallengeStartedView";
 import ChallengeDetailedDesc from "../components/Maps/ChallengeDetailedDesc";
 import ChallengeDetailedBottomBtn from "../components/Maps/ChallengeDetailedBottomBtn";
@@ -10,7 +10,7 @@ import ChallengeDetailedHeader from "../components/Maps/ChallengeDetailedHeader"
 import ChallengeFinishedInfo from "../components/Maps/ChallengeFinishedInfo";
 import ChallengeStopwatch from "../components/Maps/ChallengeStopwatch";
 import Toast from "../components/Shared/CustomToast";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import useChallengeLocation from "../hooks/useChallengeLocation";
 import PermissionRequestView from "../components/Maps/PermissionRequestView";
 const ChallengeDetailed = () => {
@@ -25,7 +25,7 @@ const ChallengeDetailed = () => {
   const [intervalId, setIntervalId] = useState();
   const METERS_TO_MAKE_CHALLENGE_READY = 70;
   const route = useRoute();
-  const {challenge, isCurrentUsers} = route.params;
+  const { challenge, isCurrentUsers } = route.params;
   const {
     usersPosition,
     setUsersPosition,
@@ -48,7 +48,7 @@ const ChallengeDetailed = () => {
   const resetChallenge = () => {
     intervalId && clearInterval(intervalId);
     intervalId && setIntervalId(null);
-    setTime({sec: 0, min: 0, hr: 0});
+    setTime({ sec: 0, min: 0, hr: 0 });
     challengeFinished && setChallengeFinished(false);
     challengeStarted && setChallengeStarted(false);
     setStartChallengeDate(null);
@@ -122,8 +122,8 @@ const ChallengeDetailed = () => {
         <View className="absolute top-10 bottom-20 left-3 right-3 rounded-3xl overflow-hidden">
           <LinearGradient
             className="flex-1 rounded-3xl"
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             colors={["#E5E7EB", "#9CA3AF", "#4B5563"]}
           >
             <ChallengeDetailedHeader />

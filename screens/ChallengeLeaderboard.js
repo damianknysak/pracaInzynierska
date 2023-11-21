@@ -6,22 +6,16 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
-import React, {useEffect, useState} from "react";
-import {useNavigation, useRoute} from "@react-navigation/native";
-import {LinearGradient} from "expo-linear-gradient";
-import {
-  ClockIcon,
-  TrophyIcon,
-  UserIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from "react-native-heroicons/outline";
-import {getChallengesLeaderboard} from "../utils/challengeUtils";
+import React, { useEffect, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { TrophyIcon, XMarkIcon } from "react-native-heroicons/outline";
+import { getChallengesLeaderboard } from "../utils/challengeUtils";
 import LeaderboardCard from "../components/Leaderboard/LeaderboardCard";
 
 const ChallengeLeaderboard = () => {
   const route = useRoute();
-  const {challengeId} = route.params;
+  const { challengeId } = route.params;
   const navigation = useNavigation();
   const [leaderboardArray, setLeaderboardArray] = useState();
   const [pending, setPending] = useState();
@@ -53,8 +47,8 @@ const ChallengeLeaderboard = () => {
           <View className="relative w-5/6 mt-5 rounded-3xl h-5/6">
             <LinearGradient
               className="flex-1 rounded-3xl"
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               colors={["#E5E7EB", "#9CA3AF", "#4B5563"]}
             >
               <View className="mt-4 flex-row items-center justify-center space-x-2">

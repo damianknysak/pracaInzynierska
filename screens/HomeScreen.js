@@ -1,41 +1,51 @@
-import {View, Text, ScrollView, RefreshControl} from "react-native";
-import React, {useState} from "react";
-import {Image, TouchableOpacity} from "react-native";
+import { View, ScrollView, RefreshControl } from "react-native";
+import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {StatusBar} from "expo-status-bar";
-import {LinearGradient} from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
 import MainMenu from "../components/Home/MainMenu";
 import Header from "../components/Home/Header";
 import PopularPlaces from "../components/Home/PopularPlaces";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import UserActivityView from "../components/Home/UserActivityView";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import useNotification from "../hooks/useNotification";
 import useHomeActivity from "../hooks/useHomeActivity";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {useRef} from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useRef } from "react";
 import Toast from "../components/Shared/CustomToast";
-import {Alert} from "react-native";
-import messaging from "@react-native-firebase/messaging";
-import axios from "axios";
 import FriendsActivityView from "../components/Home/FriendsActivityView";
 
 const HomeScreen = () => {
   const [headerMenu, setHeaderMenu] = useState("main");
-  const {getCurrentUserInfoDB} = useAuth();
+  const { getCurrentUserInfoDB } = useAuth();
   const [currentUser, setCurrentUser] = useState();
   const navigation = useNavigation();
-  const {notificationsList} = useNotification();
-  const {activityList, fetchActivity} = useHomeActivity();
+  const { notificationsList } = useNotification();
+  const {
+    activityList,
+    fetchActivity,
+    requestChangeHomeHeader,
+    requestToChangeHomeHeader,
+  } = useHomeActivity();
   const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  // navigation from outside to switch panels
+  useEffect(() => {
+    if (requestChangeHomeHeader) {
+      setHeaderMenu(requestChangeHomeHeader);
+      requestToChangeHomeHeader("");
+    }
+  }, [requestChangeHomeHeader, headerMenu]);
+
   if (!currentUser) {
     getCurrentUserInfoDB()
       .then((tego) => {
         setCurrentUser(tego);
       })
       .catch((error) => {
-        setCurrentUser({firstName: null});
+        setCurrentUser({ firstName: null });
         console.log(error);
       });
   }
@@ -60,8 +70,8 @@ const HomeScreen = () => {
         />
         <LinearGradient
           className="flex-1"
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
           colors={["#374151", "#111827"]}
         >
           <SafeAreaView className="h-screen">

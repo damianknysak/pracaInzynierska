@@ -1,7 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
-import MapView, {Polygon} from "react-native-maps";
+import React, { useEffect, useRef, useState } from "react";
+import MapView, { Polygon } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import ChallengeMarkerView from "./ChallengeMarkerView";
+import { GOOGLE_MAPS_APIKEY } from "../../utils/mapsUtils";
 
 const ChallengeStartedView = ({
   challenge,
@@ -10,7 +11,6 @@ const ChallengeStartedView = ({
   challengeStarted,
 }) => {
   const mapRef = useRef(null);
-  const GOOGLE_MAPS_APIKEY = "AIzaSyAcRStPFc7CQTBjWLRnMqkEbviZ0kxS5NY";
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
